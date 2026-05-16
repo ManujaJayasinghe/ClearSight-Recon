@@ -533,7 +533,7 @@ async function fetchJson(url, options = {}) {
     throw new FaceGenerationError(
       isAbort
         ? 'Generation timed out. Each variation can take 1–2 minutes; use Retry to try again.'
-        : `Could not reach the generation service (${detail}). Start the app with "npm run dev".`,
+        : `Could not reach the generation service (${detail}). Check that the API is running and FAL_KEY is set.`,
       { code: isAbort ? 'TIMEOUT' : 'NETWORK', cause },
     )
   } finally {

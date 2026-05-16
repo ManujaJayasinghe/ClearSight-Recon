@@ -1,7 +1,7 @@
 import './BrandTitle.css'
 
 /**
- * Animated Serpentine brand lockup (ClearSight / Recon).
+ * Serpentine brand lockup (ClearSight / Recon).
  *
  * @param {{
  *   name: string,
@@ -24,12 +24,9 @@ export default function BrandTitle({
     <Tag
       className={`brand-title brand-title--${size}${className ? ` ${className}` : ''}`}
     >
-      <span className="brand-title__glow" aria-hidden="true" />
       <span className="brand-title__inner">
         <span className="brand-title__line">{lead}</span>
-        {tail ? (
-          <span className="brand-title__line brand-title__line--recon">{tail}</span>
-        ) : null}
+        {tail ? <span className="brand-title__line">{tail}</span> : null}
       </span>
     </Tag>
   )
