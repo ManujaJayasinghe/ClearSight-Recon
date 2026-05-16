@@ -1,0 +1,609 @@
+{
+  "site": {
+    "name": "ClearSight-Recon",
+    "tagline": "විමර්ශන සංයුක්ත ඒකකය"
+  },
+  "nav": {
+    "home": "මුල් පිටුව",
+    "witnessForm": "සාක්ෂි විස්තරය",
+    "sketchResult": "චිත්‍ර ප්‍රතිඵලය",
+    "refinement": "සංශෝධනය",
+    "pdfExport": "PDF නිර්යාත",
+    "reports": "අපරාධ වාර්තා",
+    "mainAria": "ප්‍රධාන සංචාලනය"
+  },
+  "home": {
+    "eyebrow": "විමර්ශන සංයුක්ත පද්ධතිය",
+    "description": "සාක්ෂි විස්තර නිවැරදි විමර්ශන චිත්‍ර බවට පරිවර්තනය කරයි. මෙම ආරක්ෂිත ක්‍රමවේදය පරිශීලකයින්ට සාක්ෂි සටහන් සිට සංශෝධනය සහ නිල PDF නිර්යාත දක්වා මඟ පෙන්වයි.",
+    "heroTitle": "නව සංයුක්ත සැසියක් ආරම්භ කරන්න",
+    "heroText": "සාක්ෂි විස්තරය සටහන් කිරීමෙන් ආරම්භ කරන්න. පද්ධතිය මුල් චිත්‍රයක් ජනනය කර, සංශෝධනයට ඉඩ දී, නඩු ගොනු සඳහා නඩුවට සුදුසු PDF නිර්මාණය කරයි.",
+    "startForm": "සාක්ෂි පෝරමය ආරම්භ කරන්න",
+    "featureIntakeTitle": "සාක්ෂි ඇතුළත් කිරීම",
+    "featureIntakeText": "මුහුණේ ලක්ෂණ, ශරීර ගැටවුම සහ විශේෂ සලකුණු සඳහා ව්‍යුහගත පෝරමය.",
+    "featureAiTitle": "AI චිත්‍ර ජනනය",
+    "featureAiText": "විස්තර පූර්ව සංයුක්ත චිත්‍ර බවට පරිවර්තනය කරයි.",
+    "featureExportTitle": "නිල නිර්යාත",
+    "featureExportText": "විමර්ශන වාර්තා සඳහා මුද්‍රිත PDF වාර්තා ජනනය කරයි."
+  },
+  "form": {
+    "eyebrow": "පියවර 1 — ඇතුළත් කිරීම",
+    "title": "සාක්ෂි විස්තර පෝරමය",
+    "description": "චිත්‍රයක් ජනනය කිරීමට පෙර සියලු අවශ්‍ය අංශ (*) සම්පූර්ණ කරන්න. තොල්පෙට්ටිය, කන, ශරීර ගැටවුම සහ බෙහෙත් විස්තර විකල්පයි.",
+    "selectPlaceholder": "තෝරන්න…",
+    "selectLocation": "ස්ථානය තෝරන්න",
+    "clearConfirm": "සියලු සාක්ෂි විස්තර මකන්නද? මෙය අහෝසි කළ නොහැක.",
+    "submitError": "ජනනය කිරීමට පෙර සියලු අවශ්‍ය ක්ෂේත්‍ර සම්පූර්ණ කරන්න.",
+    "validationRequired": "{{field}} අවශ්‍යයි",
+    "clearForm": "පෝරමය මකන්න",
+    "generateSketch": "සංයුක්ත චිත්‍රය ජනනය කරන්න",
+    "checkingMatches": "දත්ත සමුදාය පරීක්ෂා කරමින්…",
+    "matchCheckError": "සමාන වාර්තා පරීක්ෂා කළ නොහැකි විය.",
+    "progressLabel": "පෝරම ප්‍රගතිය",
+    "progressCount": "අංශ {{total}} න් {{completed}} සම්පූර්ණ",
+    "progressPercent": "ශතය {{percent}}",
+    "sectionNavAria": "පෝරම අංශයට යන්න",
+    "required": "අවශ්‍ය",
+    "previous": "පෙර",
+    "nextSection": "ඊළඟ අංශය",
+    "placeholders": {
+      "scars": "උදා: දිගු රේඛා සිහිය, කුඩා වටකුරු සිහිය",
+      "tattoos": "උදා: දකුණු අතේ ටැටූ, හෝ \"නැත\"",
+      "birthmarks": "උදා: අඳුරු දුඹුරු මොල්, කුඩා පැතල උපන් ලකුණ",
+      "otherFeatures": "අමතර විස්තර, හෝ \"නැත\""
+    },
+    "scarLocationLabel": "සිහි තැන (මුහුණේ)",
+    "fields": {
+      "gender": "ස්ත්‍රී/පුරුෂ භාවය",
+      "ethnicity": "ජාතිකත්වය / කලාපීය මුලාශ්‍රය",
+      "faceShape": "මුහුණේ හැඩය",
+      "skinTone": "සමේ වර්ණය",
+      "ageRange": "වයස් පරාසය",
+      "foreheadSize": "හිසපිටේ ප්‍රමාණය",
+      "foreheadShape": "හිසපිටේ හැඩය",
+      "eyeShape": "ඇස් හැඩය",
+      "eyeColor": "ඇස් වර්ණය",
+      "eyeSize": "ඇස් ප්‍රමාණය",
+      "eyebrowThickness": "ඇහිරි පෘෂ්ඨතාව",
+      "eyebrowShape": "ඇහිරි හැඩය",
+      "eyebrowColor": "ඇහිරි වර්ණය",
+      "noseType": "නාසයේ වර්ගය",
+      "noseSize": "නාසයේ ප්‍රමාණය",
+      "nostrilWidth": "නාස නාඩි පළල",
+      "noseBridgeHeight": "නාස පාලමේ උස",
+      "lipThickness": "තොල් ඝනකම",
+      "mouthWidth": "කට පළල",
+      "lipColor": "තොල් වර්ණය",
+      "philtrumLength": "පිල්ට්‍රම් දිග",
+      "cheekboneProminence": "කම්මුල් ඇට ප්‍රකට බව",
+      "jawShape": "තොල්පෙට්ටි හැඩය",
+      "jawWidth": "තොල්පෙට්ටි පළල",
+      "faceSymmetry": "මුහුණේ සමමිතිය",
+      "earSize": "කනේ ප්‍රමාණය",
+      "earProtrusion": "කන පිටතට එන බව",
+      "hairColor": "හිසකෙස් වර්ණය",
+      "hairLength": "හිසකෙස් දිග",
+      "hairStyle": "හිසකෙස් විලාසය",
+      "facialHair": "මුහුණේ රැවිල්",
+      "scarLocation": "සිහි තැන",
+      "scars": "සිහි විස්තරය",
+      "tattoos": "ටැටූ",
+      "birthmarkLocation": "උපන් ලකුණ / මොල් තැන",
+      "birthmarks": "උපන් ලකුණ / මොල් විස්තරය",
+      "glasses": "කණ්ණාඩි",
+      "otherFeatures": "වෙනත් සලකුණු",
+      "height": "උස",
+      "build": "ශරීර ගැටවුම",
+      "neckLength": "බෙහෙත් දිග",
+      "neckWidth": "බෙහෙත් පළල"
+    },
+    "sections": {
+      "face": {
+        "title": "මුහුණේ ව්‍යුහය",
+        "shortTitle": "මුහුණ"
+      },
+      "eyes": {
+        "title": "ඇස්",
+        "shortTitle": "ඇස්"
+      },
+      "nose": {
+        "title": "නාසය",
+        "shortTitle": "නාසය"
+      },
+      "mouth": {
+        "title": "කට සහ තොල්",
+        "shortTitle": "කට"
+      },
+      "jawline": {
+        "title": "තොල්පෙට්ටිය සහ කම්මුල්",
+        "shortTitle": "තොල්පෙට්ටිය"
+      },
+      "ears": {
+        "title": "කන",
+        "shortTitle": "කන"
+      },
+      "hair": {
+        "title": "හිසකෙස්",
+        "shortTitle": "හිසකෙස්"
+      },
+      "facial-hair": {
+        "title": "මුහුණේ රැවිල්",
+        "shortTitle": "රැවිල්"
+      },
+      "distinguishing": {
+        "title": "විශේෂ ලක්ෂණ",
+        "shortTitle": "ලක්ෂණ"
+      },
+      "build": {
+        "title": "ශරීර ගැටවුම",
+        "shortTitle": "ගැටවුම"
+      },
+      "neck": {
+        "title": "බෙහෙත් සහ සමස්ථ",
+        "shortTitle": "බෙහෙත්"
+      }
+    }
+  },
+  "result": {
+    "eyebrow": "පියවර 2 — ජනනය",
+    "title": "සැකකරු සංයුක්ත වාර්තාව",
+    "missingDescription": "සාක්ෂි විස්තරයක් ලබා නොදී ඇත. සංයුක්ත චිත්‍රය ජනනය කිරීමට සාක්ෂි පෝරමය සම්පූර්ණ කරන්න.",
+    "goToForm": "සාක්ෂි පෝරමයට යන්න",
+    "caseReference": "නඩු යොමුව",
+    "generated": "ජනනය කළ දිනය",
+    "inProgress": "ප්‍රගතියේ…",
+    "primaryComposite": "ප්‍රධාන සංයුක්ත — විෂය 1",
+    "selectMatchAria": "වඩාත් සමීප ගැලපීම තෝරන්න",
+    "variation": "විභේදනය {{n}}",
+    "variationsHint": "සාක්ෂි විස්තරයට වඩාත් ගැලපෙන විභේදනය තෝරන්න.",
+    "frontView": "ඉදිරි දර්ශනය",
+    "sideProfile": "පැති පැතිකඩ",
+    "generationFailed": "ජනනය අසාර්ථකයි",
+    "sideProfileFailed": "පැති පැතිකඩ අසාර්ථකයි",
+    "tryAgain": "නැවත උත්සාහ කරන්න",
+    "frontAlt": "ඉදිරි දර්ශන සැකකරු සංයුක්ත",
+    "sideAlt": "පැති පැතිකඩ සැකකරු සංයුක්ත",
+    "sidePlaceholder": "එම සාක්ෂි විස්තරයෙන් 90° පැති පැතිකඩ දර්ශනය ජනනය කරන්න.",
+    "generatingSide": "පැති පැතිකඩ ජනනය වෙමින්…",
+    "generateSide": "පැති පැතිකඩ ජනනය කරන්න",
+    "regenerating": "නැවත ජනනය වෙමින්…",
+    "regenerateSide": "පැති පැතිකඩ නැවත ජනනය",
+    "captionLoading": "සාක්ෂි සාක්ෂියෙන් ඉදිරි සංයුක්ත විභේදන {{count}} රෙන්ඩර් වෙමින්…",
+    "captionError": "සංයුක්ත රෙන්ඩර් කළ නොහැක. විස්තරය සකස් කරන්න හෝ නැවත උත්සාහ කරන්න.",
+    "captionSideLoading": "ඉදිරි දර්ශනය සම්පූර්ණයි. පැති පැතිකඩ ජනනය ප්‍රගතියේ…",
+    "captionChoose": "ඉහළින් වඩාත් ගැලපෙන එක තෝරන්න, පසුව සංශෝධනය හෝ නිර්යාත කරන්න.",
+    "captionDefault": "සාක්ෂි සාක්ෂිය මත AI-ජනිත විමර්ශන සංයුක්ත.",
+    "summaryHeading": "සාක්ෂි විස්තර සාරාංශය",
+    "summarySub": "සංයුක්ත සැසියේදී ඉදිරිපත් කළ එකතු කළ ඇතුළත් කිරීම් ක්ෂේත්‍ර. සංශෝධනය හෝ නිර්යාත කිරීමට පෙර නිරවද්‍යතාව සත්‍යාපනය කරන්න.",
+    "summaryEmpty": "සාක්ෂි විස්තර ඇතුළත් කර නැත. විස්තරය එක් කිරීමට පෝරමයට ආපසු යන්න.",
+    "fieldsOf": "ක්ෂේත්‍ර {{total}} න් {{filled}}",
+    "generatingBadge": "සංයුක්ත ජනනය වෙමින්…",
+    "footerNote": "මෙම වාර්තාව විමර්ශන භාවිතය සඳහා පමණි. බෙදාහැරීම අවසර ලැබූ පුද්ගලයින්ට සීමායි. සංයුක්ත සාක්ෂි සත්‍යාපනයට යටත්ය.",
+    "reportActionsAria": "වාර්තා ක්‍රියා",
+    "refineSketch": "මෙම චිත්‍රය සංශෝධනය කරන්න",
+    "exportPdf": "PDF නිර්යාත",
+    "startOver": "නැවත ආරම්භ කරන්න",
+    "leaveConfirm": "ජනනය ප්‍රගතියේ. පෝරමයට යාමට පිටවන්නද?",
+    "officialStamp": "නිල භාවිතය පමණි",
+    "notSpecified": "නිර්දේශ නොකළ",
+    "statusBuildingPrompt": "පෝට්‍රේට් ප්‍රොම්ප්ට් ගොඩනගමින්…",
+    "statusRequesting": "සංයුක්ත විභේදන {{count}} ජනනය (මිනිත්තු 3–6 ගත විය හැක)…",
+    "statusProcessing": "සැකසෙමින්…",
+    "statusSideBuilding": "පැති පැතිකඩ ප්‍රොම්ප්ට් ගොඩනගමින්…",
+    "statusSideRequesting": "පැති පැතිකඩ ජනනය වෙමින්…",
+    "toastVariations": "සංයුක්ත විභේදන {{count}} ජනනය විය",
+    "toastFrontFailed": "ඉදිරි සංයුක්ත ජනනය අසාර්ථකයි",
+    "toastSideSuccess": "පැති පැතිකඩ සාර්ථකව ජනනය විය",
+    "toastSideFailed": "පැති පැතිකඩ ජනනය අසාර්ථකයි",
+    "errorFront": "සංයුක්ත චිත්‍රය ජනනය කළ නොහැක. නැවත උත්සාහ කරන්න.",
+    "errorSide": "පැති පැතිකඩ ජනනය කළ නොහැක. නැවත උත්සාහ කරන්න."
+  },
+  "refine": {
+    "eyebrow": "පියවර 3 — සංශෝධනය",
+    "title": "චිත්‍ර සංශෝධනය",
+    "missingDescription": "ලක්ෂණ සංශෝධනය කිරීමට පෙර ප්‍රතිඵල පිටුවේ සංයුක්ත ජනනය කරන්න.",
+    "goToResult": "චිත්‍ර ප්‍රතිඵලයට යන්න",
+    "description": "සාක්ෂි සාක්ෂියට ගැලපෙන තෙක් ලක්ෂණ සකස් කර සංයුක්ත නැවත ජනනය කරන්න. සංසරණයට හෝ ප්‍රතිස්ථාපනයට පහළින් මෑත අනුවාදයක් තෝරන්න.",
+    "previewAria": "වර්තමාන සංයුක්ත චිත්‍රය",
+    "currentComposite": "වර්තමාන සංයුක්ත",
+    "refinedAlt": "සංශෝධිත සංයුක්ත චිත්‍රය",
+    "statusApplying": "සංශෝධනය යොදා චිත්‍රය නැවත ජනනය වෙමින්…",
+    "statusViewing": "බලනවා: {{label}}",
+    "statusLoading": "චිත්‍රය පූරණය වෙමින්…",
+    "controlsAria": "ඉක්මන් සංශෝධන",
+    "quickAdjustments": "ඉක්මන් සංශෝධන",
+    "controlsSub": "සෑම පාලකයක්ම සාක්ෂි විස්තරය යාවත්කාලීන කර නව සංයුක්ත ජනනය කරයි. වේගවත් සංශෝධන සඳහා Alt ඔබා කෙටිමං යතුර ඔබන්න.",
+    "shortcutsAria": "යතුරු පුවරු කෙටිමං",
+    "shortcutsTitle": "යතුරු පුවරු කෙටිමං",
+    "exportPdf": "මෙය නිවැරදියි — PDF නිර්යාත",
+    "historyAria": "අනුවාද ඉතිහාසය",
+    "historyTitle": "අනුවාද ඉතිහාසය",
+    "historySub": "අවසන් {{count}} ජනිත අනුවාද — ප්‍රතිස්ථාපනයට රුවය ක්ලික් කරන්න",
+    "slot": "ස්ථානය {{n}}",
+    "restoreAria": "{{label}} ප්‍රතිස්ථාපනය",
+    "backToReport": "වාර්තාවට ආපසු",
+    "original": "මුල්",
+    "adjusted": "සකස් කළ",
+    "restored": "ප්‍රතිස්ථාපනය: {{label}}",
+    "sketchUpdated": "{{label}} — චිත්‍රය යාවත්කාලීන විය",
+    "regenFailed": "චිත්‍රය නැවත ජනනය කළ නොහැක. වෙනත් සංශෝධනයක් උත්සාහ කරන්න.",
+    "regenFailedToast": "නැවත ජනනය අසාර්ථකයි. නැවත උත්සාහ කරන්න.",
+    "statusBuilding": "පෝට්‍රේට් ප්‍රොම්ප්ට් ගොඩනගමින්…",
+    "statusRegenerating": "සංයුක්ත නැවත ජනනය වෙමින්…",
+    "statusProcessing": "සැකසෙමින්…",
+    "groups": {
+      "Nose": "නාසය",
+      "Hair": "හිසකෙස්",
+      "Facial hair": "මුහුණේ රැවිල්",
+      "Eyes": "ඇස්",
+      "Age": "වයස",
+      "Skin tone": "සමේ වර්ණය"
+    },
+    "controls": {
+      "nose-wider": "නාසය පළල් කරන්න",
+      "nose-narrower": "නාසය සිහින් කරන්න",
+      "hair-longer": "හිසකෙස් දිගු කරන්න",
+      "hair-shorter": "හිසකෙස් කෙටි කරන්න",
+      "beard-add": "රැවිල් එක් කරන්න",
+      "beard-remove": "රැවිල් ඉවත් කරන්න",
+      "eyes-larger": "ඇස් විශාල කරන්න",
+      "eyes-smaller": "ඇස් කුඩා කරන්න",
+      "age-older": "වයස වැඩි කරන්න",
+      "age-younger": "වයස අඩු කරන්න",
+      "skin-lighter": "සමේ වර්ණය (සැහැල්ලු)",
+      "skin-darker": "සමේ වර්ණය (අඳුරු)"
+    },
+    "shortcuts": {
+      "nose": "නාසය පළල් / සිහින්",
+      "hair": "හිසකෙස් දිගු / කෙටි",
+      "beard": "රැවිල් එක් / ඉවත්",
+      "eyes": "ඇස් විශාල / කුඩා",
+      "age": "වයස වැඩි / අඩු",
+      "skin": "සම සැහැල්ලු / අඳුරු"
+    }
+  },
+  "pdf": {
+    "eyebrow": "පියවර 4 — නිර්යාත",
+    "title": "PDF නිර්යාත",
+    "description": "නඩු ලේඛන සහ අවසර ලැබූ පුද්ගලයින්ට බෙදාහැරීම සඳහා නිල විමර්ශන සංයුක්ත වාර්තාව ජනනය කරන්න.",
+    "officialReport": "නිල සංයුක්ත වාර්තාව",
+    "frontView": "ඉදිරි දර්ශනය",
+    "sideProfile": "පැති පැතිකඩ",
+    "frontAlt": "ඉදිරි දර්ශන සංයුක්ත",
+    "sideAlt": "පැති පැතිකඩ සංයුක්ත",
+    "frontPlaceholder": "ඉදිරි සංයුක්ත",
+    "sideNotGenerated": "පැති පැතිකඩ ජනනය නොකළ",
+    "caseId": "නඩු ID:",
+    "date": "දිනය:",
+    "investigator": "විමර්ශක:",
+    "witnessId": "සාක්ෂි ID:",
+    "ageRange": "වයස් පරාසය:",
+    "authorizedUser": "[අවසර ලැබූ පරිශීලක]",
+    "officialStamp": "නිල භාවිතය පමණි",
+    "noImagesError": "සංයුක්ත රූප ලබා නොදී ඇත. පළමුව ප්‍රතිඵල පිටුවේ ජනනය සම්පූර්ණ කරන්න.",
+    "exportOptions": "නිර්යාත විකල්ප",
+    "leadInvestigator": "ප්‍රධාන විමර්ශක",
+    "investigatorPlaceholder": "නම සහ බැජ් අංකය",
+    "reportNotes": "වාර්තා සටහන්",
+    "notesPlaceholder": "PDF පාදයේ ඇතුළත් කිරීමට විකල්ප සටහන්",
+    "backToRefine": "සංශෝධනයට ආපසු",
+    "downloadPdf": "PDF වාර්තාව බාගත කරන්න",
+    "newSession": "නව සැසිය"
+  },
+  "loading": {
+    "default": "සංයුක්ත චිත්‍රය ජනනය වෙමින්…",
+    "hint": "සාක්ෂි විස්තරයෙන් විමර්ශන සංයුක්ත ගොඩනගමින්"
+  },
+  "match": {
+    "title": "දත්ත සමුදා ගැලපීම් හමු විය",
+    "subtitle": "නව සංයුක්තය ජනනය කිරීමට පෙර සමාන වාර්තා සමාලෝචනය කරන්න. ලකුණු අනුව පෙළගැසේ.",
+    "close": "වසන්න",
+    "headerExact": "පවතින වාර්තාවක් හමු විය",
+    "headerHigh": "සමාන සැකකරු හමු විය",
+    "headerPossible": "හැකි ගැලපීමක් හමු විය",
+    "headerDefault": "ගැලපීමක් හමු විය",
+    "caseNumber": "නඩු අංකය",
+    "created": "සෑදූ දිනය",
+    "matchPercent": "ගැලපීම",
+    "matchedFields": "ගැලපූ ක්ෂේත්‍ර",
+    "viewReport": "සම්පූර්ණ වාර්තාව බලන්න",
+    "continueAnyway": "කෙසේ වෙතත් ජනනය කරගෙන යන්න"
+  },
+  "reports": {
+    "eyebrow": "අපරාධ දත්ත සමුදාය",
+    "title": "අපරාධ වාර්තා",
+    "description": "දත්ත සමුදායෙන් සුරකින ලද සැකකරු සංයුක්ත වාර්තා සොයා බලන්න.",
+    "searchLabel": "සොයන්න",
+    "searchPlaceholder": "නඩු අංකය, ජාතිකත්වය, හෝ වයස් පරාසය…",
+    "sortLabel": "පෙළගැසීම",
+    "sortNewest": "නවතම පළමුව",
+    "sortOldest": "පැරණිතම පළමුව",
+    "loading": "වාර්තා පූරණය වෙමින්…",
+    "noResults": "ඔබේ සෙවුමට ගැලපෙන වාර්තා නැත.",
+    "noReports": "තවම අපරාධ වාර්තා සුරකි නැත.",
+    "startForm": "සාක්ෂි පෝරමය ආරම්භ කරන්න",
+    "noImage": "රූපයක් නැත",
+    "viewFull": "සම්පූර්ණ වාර්තාව බලන්න",
+    "backToReports": "වාර්තා වෙත ආපසු",
+    "printReport": "වාර්තාව මුද්‍රණය",
+    "detailLoading": "වාර්තාව පූරණය වෙමින්…",
+    "detailNotFound": "වාර්තාව හමු නොවීය",
+    "detailNotFoundDesc": "මෙම වාර්තාව පූරණය කළ නොහැකි විය.",
+    "detailEyebrow": "අපරාධ වාර්තාව",
+    "detailCreated": "සෑදූ දිනය",
+    "detailVariation": "විචලනය",
+    "detailNoFields": "විස්තර ක්ෂේත්‍ර නොමැත.",
+    "notesTitle": "සටහන්",
+    "notesEmpty": "අමතර සටහන් නොමැත."
+  },
+  "common": {
+    "none": "නැත"
+  },
+  "options": {
+    "gender": {
+      "Male": "පුරුෂ",
+      "Female": "ස්ත්‍රී"
+    },
+    "ethnicity": {
+      "South Asian": "දකුණු ආසියානු",
+      "East Asian": "නැගෙනහිර ආසියානු",
+      "Southeast Asian": "ගිනිකොණ ආසියානු",
+      "Middle Eastern": "මැද පෙරදිග",
+      "West African": "බටහිර අප්‍රිකානු",
+      "East African": "නැගෙනහිර අප්‍රිකානු",
+      "European": "යුරෝපීය",
+      "Latin American": "ලතින් අමෙරිකානු",
+      "Mixed": "මිශ්‍ර"
+    },
+    "faceShape": {
+      "Oval": "ඕවල්",
+      "Round": "වට",
+      "Square": "සෑකෝණ",
+      "Heart": "හද",
+      "Diamond": "දියමන්ති",
+      "Oblong": "දිග"
+    },
+    "skinTone": {
+      "Very light": "ඉතා සැහැල්ලු",
+      "Light": "සැහැල්ලු",
+      "Medium": "මධ්‍යම",
+      "Olive": "ඔලිව්",
+      "Brown": "දුඹුරු",
+      "Dark brown": "අඳුරු දුඹුරු",
+      "Dark": "අඳුරු"
+    },
+    "ageRange": {
+      "Teenager": "දරුවන්",
+      "20s": "වසර 20",
+      "30s": "වසර 30",
+      "40s": "වසර 40",
+      "50s": "වසර 50",
+      "60s+": "වසර 60+"
+    },
+    "foreheadSize": {
+      "Small": "කුඩා",
+      "Medium": "මධ්‍යම",
+      "Large": "විශාල"
+    },
+    "foreheadShape": {
+      "Flat": "පැතල",
+      "Rounded": "වට",
+      "Prominent": "ප්‍රකට"
+    },
+    "eyeShape": {
+      "Almond": "බදම්",
+      "Round": "වට",
+      "Hooded": "හුඩ්",
+      "Monolid": "එකල්",
+      "Upturned": "ඉහළ",
+      "Downturned": "පහළ"
+    },
+    "eyeColor": {
+      "Brown": "දුඹුරු",
+      "Black": "කළු",
+      "Blue": "නීල",
+      "Green": "කොළ",
+      "Hazel": "හේසල්",
+      "Grey": "අළු"
+    },
+    "eyeSize": {
+      "Small": "කුඩා",
+      "Medium": "මධ්‍යම",
+      "Large": "විශාල"
+    },
+    "eyebrowThickness": {
+      "Thin": "සිහින්",
+      "Medium": "මධ්‍යම",
+      "Thick": "ඝන"
+    },
+    "eyebrowShape": {
+      "Straight": "සෘජු",
+      "Arched": "වක්‍ර",
+      "Flat": "පැතල",
+      "Bushy": "ඝන",
+      "Curved": "වක්‍ර"
+    },
+    "eyebrowColor": {
+      "Black": "කළු",
+      "Dark brown": "අඳුරු දුඹුරු",
+      "Brown": "දුඹුරු",
+      "Light brown": "සැහැල්ලු දුඹුරු",
+      "Blonde": "රුවන්",
+      "Grey": "අළු"
+    },
+    "noseType": {
+      "Narrow": "සිහින්",
+      "Broad": "පළල",
+      "Hooked": "කුරු",
+      "Upturned": "ඉහළ",
+      "Flat": "පැතල",
+      "Bulbous": "බුල්බස්"
+    },
+    "noseSize": {
+      "Small": "කුඩා",
+      "Medium": "මධ්‍යම",
+      "Large": "විශාල"
+    },
+    "nostrilWidth": {
+      "Narrow": "සිහින්",
+      "Medium": "මධ්‍යම",
+      "Wide": "පළල"
+    },
+    "noseBridgeHeight": {
+      "Low": "අඩු",
+      "Medium": "මධ්‍යම",
+      "High": "ඉහළ"
+    },
+    "lipThickness": {
+      "Thin": "සිහින්",
+      "Medium": "මධ්‍යම",
+      "Full": "පූර්ණ"
+    },
+    "mouthWidth": {
+      "Narrow": "සිහින්",
+      "Medium": "මධ්‍යම",
+      "Wide": "පළල"
+    },
+    "lipColor": {
+      "Light pink": "සැහැල්ලු රෝස",
+      "Medium pink": "මධ්‍යම රෝස",
+      "Dark pink": "අඳුරු රෝස",
+      "Brown": "දුඹුරු",
+      "Dark brown": "අඳුරු දුඹුරු"
+    },
+    "philtrumLength": {
+      "Short": "කෙටි",
+      "Medium": "මධ්‍යම",
+      "Long": "දිග"
+    },
+    "cheekboneProminence": {
+      "Flat": "පැතල",
+      "Medium": "මධ්‍යම",
+      "High/Prominent": "ඉහළ/ප්‍රකට"
+    },
+    "jawShape": {
+      "Sharp": "තියුණු",
+      "Rounded": "වට",
+      "Square": "සෑකෝණ",
+      "Soft": "මෘදු"
+    },
+    "jawWidth": {
+      "Narrow": "සිහින්",
+      "Medium": "මධ්‍යම",
+      "Wide": "පළල"
+    },
+    "faceSymmetry": {
+      "Symmetric": "සමමිතික",
+      "Slightly asymmetric": "සුළු අසමමිතික"
+    },
+    "earSize": {
+      "Small": "කුඩා",
+      "Medium": "මධ්‍යම",
+      "Large": "විශාල"
+    },
+    "earProtrusion": {
+      "Flat against head": "හිසට එරෙහි පැතල",
+      "Slightly protruding": "සුළු පිටතට",
+      "Protruding": "පිටතට"
+    },
+    "hairColor": {
+      "Black": "කළු",
+      "Dark brown": "අඳුරු දුඹුරු",
+      "Brown": "දුඹුරු",
+      "Light brown": "සැහැල්ලු දුඹුරු",
+      "Blonde": "රුවන්",
+      "Red": "රතු",
+      "Grey": "අළු",
+      "White": "සුදු",
+      "Bald": "නිල්වන්"
+    },
+    "hairLength": {
+      "Bald": "නිල්වන්",
+      "Very short": "ඉතා කෙටි",
+      "Short": "කෙටි",
+      "Medium": "මධ්‍යම",
+      "Long": "දිග"
+    },
+    "hairStyle": {
+      "Straight": "සෘජු",
+      "Wavy": "තරංග",
+      "Curly": "කරල්",
+      "Afro": "ඇෆ්‍රෝ",
+      "Pulled back": "පිටුපසට",
+      "Dreadlocks": "ඩ්‍රෙඩ්ලොක්ස්"
+    },
+    "facialHair": {
+      "None": "නැත",
+      "Light stubble": "සැහැල්ලු රැවිලි",
+      "Heavy stubble": "ඝන රැවිලි",
+      "Thin mustache": "සිහින් මීසය",
+      "Thick mustache": "ඝන මීසය",
+      "Goatee": "ගෝටී",
+      "Short beard": "කෙටි රැවිල්",
+      "Long beard": "දිග රැවිල්",
+      "Full beard": "පූර්ණ රැවිල්"
+    },
+    "scarLocation": {
+      "None": "නැත",
+      "Left cheek": "වම් කම්මුල",
+      "Right cheek": "දකුණු කම්මුල",
+      "Forehead": "හිසපිට",
+      "Chin": "තොල්",
+      "Upper lip": "ඉහළ තොල",
+      "Lower lip": "පහළ තොල",
+      "Under left eye": "වම් ඇස යට",
+      "Under right eye": "දකුණු ඇස යට",
+      "Left temple": "වම් කපොල",
+      "Right temple": "දකුණු කපොල",
+      "Left jaw": "වම් තොල්පෙට්ටිය",
+      "Right jaw": "දකුණු තොල්පෙට්ටිය",
+      "Left side of nose": "වම් නාසය පැත්ත",
+      "Right side of nose": "දකුණු නාසය පැත්ත",
+      "Neck": "බෙහෙත්",
+      "Bridge of nose": "නාසයේ පාලම"
+    },
+    "birthmarkLocation": {
+      "None": "නැත",
+      "Above left lip": "වම් තොලට ඉහළ",
+      "Above right lip": "දකුණු තොලට ඉහළ",
+      "Left cheek": "වම් කම්මුල",
+      "Right cheek": "දකුණු කම්මුල",
+      "Under left eye": "වම් ඇස යට",
+      "Under right eye": "දකුණු ඇස යට",
+      "Forehead": "හිසපිට",
+      "Chin": "තොල්",
+      "Nose": "නාසය",
+      "Left temple": "වම් කපොල",
+      "Right temple": "දකුණු කපොල",
+      "Left jaw": "වම් තොල්පෙට්ටිය",
+      "Right jaw": "දකුණු තොල්පෙට්ටිය"
+    },
+    "glasses": {
+      "None": "නැත",
+      "Thin frame": "සිහින් රාමු",
+      "Thick frame": "ඝන රාමු",
+      "Sunglasses": "සූර්ය කණ්ණාඩි"
+    },
+    "height": {
+      "Short": "කෙටි",
+      "Average": "සාමාන්‍ය",
+      "Tall": "උස",
+      "Very tall": "ඉතා උස"
+    },
+    "build": {
+      "Slim": "සිහින්",
+      "Average": "සාමාන්‍ය",
+      "Athletic": "ක්‍රීඩා",
+      "Heavy": "ඝන"
+    },
+    "neckLength": {
+      "Short": "කෙටි",
+      "Medium": "මධ්‍යම",
+      "Long": "දිග"
+    },
+    "neckWidth": {
+      "Thin": "සිහින්",
+      "Medium": "මධ්‍යම",
+      "Thick": "ඝන"
+    }
+  }
+}
