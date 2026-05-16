@@ -1,0 +1,115 @@
+.composite-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 100%;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.composite-loading__frame {
+  position: relative;
+  width: 160px;
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.composite-loading__silhouette {
+  color: var(--navy-600);
+  width: 100px;
+  height: auto;
+  opacity: 0.85;
+}
+
+.composite-loading__silhouette svg {
+  width: 100%;
+  height: auto;
+}
+
+.composite-loading__ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  pointer-events: none;
+}
+
+.composite-loading__ring--outer {
+  inset: 0;
+  border-top-color: var(--gold);
+  border-right-color: rgba(201, 162, 39, 0.25);
+  animation: composite-spin 1.4s linear infinite;
+}
+
+.composite-loading__ring--inner {
+  inset: 18px;
+  border-bottom-color: var(--gold-light);
+  border-left-color: rgba(201, 162, 39, 0.2);
+  animation: composite-spin 1s linear infinite reverse;
+}
+
+.composite-loading__scan {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--gold),
+    transparent
+  );
+  box-shadow: 0 0 12px rgba(201, 162, 39, 0.6);
+  animation: composite-scan 2s ease-in-out infinite;
+  z-index: 2;
+}
+
+.composite-loading__message {
+  margin: 0 0 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--white);
+  letter-spacing: 0.04em;
+}
+
+.composite-loading__hint {
+  margin: 0;
+  font-size: 0.75rem;
+  color: var(--slate-400);
+  max-width: 220px;
+  line-height: 1.4;
+}
+
+@keyframes composite-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes composite-scan {
+  0%,
+  100% {
+    top: 12%;
+    opacity: 0.4;
+  }
+  50% {
+    top: 82%;
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .composite-loading__ring--outer,
+  .composite-loading__ring--inner,
+  .composite-loading__scan {
+    animation: none;
+  }
+
+  .composite-loading__ring--outer {
+    border-color: rgba(201, 162, 39, 0.4);
+  }
+}
