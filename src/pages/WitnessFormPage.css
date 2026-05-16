@@ -1,6 +1,7 @@
 .witness-form-page {
-  max-width: 880px;
-  padding-bottom: 48px;
+  width: 100%;
+  max-width: 52rem;
+  padding-bottom: 3rem;
 }
 
 @media (prefers-reduced-motion: no-preference) {

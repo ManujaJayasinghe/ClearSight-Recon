@@ -23,7 +23,7 @@ export default function PdfExportPage() {
   const hasSide = Boolean(sideProfileImageUrl)
 
   return (
-    <article className="page pdf-export-page">
+    <article className="page page--wide pdf-export-page">
       <header className="page__header">
         <span className="page__eyebrow">Step 4 — Export</span>
         <h1 className="page__title">PDF Export</h1>

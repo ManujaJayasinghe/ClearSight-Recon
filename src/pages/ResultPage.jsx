@@ -9,14 +9,17 @@ import { generateCaseReference } from '../utils/caseReference'
 import {
   buildSideProfilePrompt,
   generateFace,
+  generateFaceVariations,
   GenerationStatus,
 } from '../utils/generateFace'
 import { buildWitnessSummarySections } from '../utils/witnessSummary'
 import './ResultPage.css'
 
+const VARIATION_COUNT = 3
+
 const STATUS_MESSAGES = {
   [GenerationStatus.BUILDING_PROMPT]: 'Building portrait prompt…',
-  [GenerationStatus.REQUESTING]: 'Generating composite sketch…',
+  [GenerationStatus.REQUESTING]: `Generating ${VARIATION_COUNT} composite variations (may take 3–6 minutes)…`,
 }
 
 const SIDE_STATUS_MESSAGES = {
@@ -45,7 +48,11 @@ export default function ResultPage() {
   const frontBusyRef = useRef(false)
 
   const caseReference = useMemo(() => generateCaseReference(), [])
-  const [imageUrl, setImageUrl] = useState(null)
+  const [variationUrls, setVariationUrls] = useState([])
+  const [variationSeeds, setVariationSeeds] = useState([])
+  const [selectedVariationIndex, setSelectedVariationIndex] = useState(0)
+  const imageUrl = variationUrls[selectedVariationIndex] ?? null
+  const activeSeed = variationSeeds[selectedVariationIndex] ?? undefined
   const [phase, setPhase] = useState(() => (description ? 'loading' : 'missing'))
   const [statusMessage, setStatusMessage] = useState(STATUS_MESSAGES[GenerationStatus.BUILDING_PROMPT])
   const [errorMessage, setErrorMessage] = useState('')
@@ -71,7 +78,9 @@ export default function ResultPage() {
       frontBusyRef.current = true
       setPhase('loading')
       setErrorMessage('')
-      setImageUrl(null)
+      setVariationUrls([])
+      setVariationSeeds([])
+      setSelectedVariationIndex(0)
       setCompletedAt(null)
       setSideProfileUrl(null)
       setSidePhase('idle')
@@ -79,7 +88,7 @@ export default function ResultPage() {
       setStatusMessage(STATUS_MESSAGES[GenerationStatus.BUILDING_PROMPT])
 
       try {
-        const url = await generateFace(description, {
+        const { urls, seeds } = await generateFaceVariations(description, VARIATION_COUNT, {
           onStatusChange: (status) => {
             if (!cancelled) {
               setStatusMessage(STATUS_MESSAGES[status] ?? 'Processing…')
@@ -87,10 +96,12 @@ export default function ResultPage() {
           },
         })
         if (cancelled) return
-        setImageUrl(url)
+        setVariationUrls(urls)
+        setVariationSeeds(seeds ?? [])
+        setSelectedVariationIndex(0)
         setCompletedAt(new Date())
         setPhase('success')
-        showToast('Front composite generated successfully')
+        showToast(`${urls.length} composite variations generated`)
       } catch (err) {
         if (cancelled) return
         setErrorMessage(
@@ -134,13 +145,14 @@ export default function ResultPage() {
 
     try {
       const sidePrompt = buildSideProfilePrompt(description)
-      const url = await generateFace(description, {
+      const { imageUrl: sideUrl } = await generateFace(description, {
         prompt: sidePrompt,
+        view: 'side',
         onStatusChange: (status) => {
           setSideStatusMessage(SIDE_STATUS_MESSAGES[status] ?? 'Processing…')
         },
       })
-      setSideProfileUrl(url)
+      setSideProfileUrl(sideUrl)
       setSidePhase('success')
       showToast('Side profile generated successfully')
     } catch (err) {
@@ -158,6 +170,7 @@ export default function ResultPage() {
 
   const reportState = {
     imageUrl,
+    seed: activeSeed,
     sideProfileImageUrl: sideProfileUrl,
     description: description ?? {},
     caseReference,
@@ -171,7 +184,7 @@ export default function ResultPage() {
 
   if (phase === 'missing') {
     return (
-      <article className="page result-page">
+      <article className="page page--wide result-page">
         <header className="page__header">
           <span className="page__eyebrow">Step 2 — Generation</span>
           <h1 className="page__title">Suspect Composite Report</h1>
@@ -188,7 +201,7 @@ export default function ResultPage() {
   }
 
   return (
-    <article className="page result-page">
+    <article className="page page--wide result-page">
       <section className="result-report__wrapper">
         <section className="result-report">
           <header className="result-report__banner">
@@ -227,6 +240,39 @@ export default function ResultPage() {
               <span className="result-report__image-label">
                 Primary Composite — Subject No. 1
               </span>
+              {phase === 'success' && variationUrls.length > 1 ? (
+                <div
+                  className="result-report__variations"
+                  role="listbox"
+                  aria-label="Select the closest match"
+                >
+                  {variationUrls.map((url, index) => (
+                    <button
+                      key={`${url}-${index}`}
+                      type="button"
+                      role="option"
+                      aria-selected={index === selectedVariationIndex}
+                      aria-label={`Variation ${index + 1}`}
+                      className={`result-report__variation${index === selectedVariationIndex ? ' result-report__variation--selected' : ''}`}
+                      onClick={() => setSelectedVariationIndex(index)}
+                    >
+                      <CompositeImage
+                        src={url}
+                        alt={`Composite variation ${index + 1}`}
+                        className="result-report__variation-image"
+                      />
+                      <span className="result-report__variation-label">
+                        {index + 1}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              ) : null}
+              <p
+                className={`result-report__variations-hint${phase === 'success' && variationUrls.length > 1 ? '' : ' result-report__variations-hint--hidden'}`}
+              >
+                Select the variation that best matches the witness description.
+              </p>
               <div className="result-report__views">
                 <div className="result-report__view">
                   <span className="result-report__view-tag">Front View</span>
@@ -346,12 +392,14 @@ export default function ResultPage() {
 
               <p className="result-report__image-caption">
                 {phase === 'loading'
-                  ? 'Rendering front composite from witness testimony…'
+                  ? `Rendering ${VARIATION_COUNT} front composite variations from witness testimony…`
                   : phase === 'error'
                     ? 'Composite could not be rendered. Adjust the description or retry.'
                     : sidePhase === 'loading'
                       ? 'Front view complete. Side profile generation in progress…'
-                      : 'AI-generated forensic composites based on witness testimony.'}
+                      : variationUrls.length > 1
+                        ? 'Choose the closest match above, then refine or export.'
+                        : 'AI-generated forensic composites based on witness testimony.'}
               </p>
             </aside>
 
@@ -365,30 +413,40 @@ export default function ResultPage() {
               </p>
 
               <div className="result-report__summary-sections">
-                {summarySections.map((section) => (
-                  <section key={section.id} className="result-report__section">
-                    <h3 className="result-report__section-title">
-                      {section.title}
-                    </h3>
-                    <dl className="result-report__field-grid">
-                      {section.fields.map((field) => (
-                        <div
-                          key={field.key}
-                          className={`result-report__field${field.isFullWidth ? ' result-report__field--full' : ''}`}
-                        >
-                          <dt className="result-report__field-label">
-                            {field.label}
-                          </dt>
-                          <dd
-                            className={`result-report__field-value${field.isEmpty ? ' result-report__field-value--empty' : ''}`}
+                {summarySections.length === 0 ? (
+                  <p className="result-report__summary-empty">
+                    No witness details were entered. Return to the form to add a
+                    description.
+                  </p>
+                ) : (
+                  summarySections.map((section) => (
+                    <section key={section.id} className="result-report__section">
+                      <header className="result-report__section-header">
+                        <h3 className="result-report__section-title">
+                          {section.title}
+                        </h3>
+                        <span className="result-report__section-count">
+                          {section.filledCount} of {section.totalCount} fields
+                        </span>
+                      </header>
+                      <dl className="result-report__field-list">
+                        {section.fields.map((field) => (
+                          <div
+                            key={field.key}
+                            className={`result-report__field${field.isFullWidth ? ' result-report__field--full' : ''}`}
                           >
-                            {field.value}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </section>
-                ))}
+                            <dt className="result-report__field-label">
+                              {field.label}
+                            </dt>
+                            <dd className="result-report__field-value">
+                              {field.value}
+                            </dd>
+                          </div>
+                        ))}
+                      </dl>
+                    </section>
+                  ))
+                )}
               </div>
 
               {phase === 'loading' ? (

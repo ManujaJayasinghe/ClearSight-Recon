@@ -18,6 +18,15 @@
   --sans: 'Segoe UI', system-ui, Roboto, sans-serif;
   --mono: ui-monospace, Consolas, 'Courier New', monospace;
 
+  --page-max: 56rem;
+  --page-wide: 75rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --radius: 8px;
+
   font: 16px/1.5 var(--sans);
   color: var(--slate-300);
   background: var(--navy-950);
@@ -59,4 +68,9 @@ a {
 
 button {
   font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }

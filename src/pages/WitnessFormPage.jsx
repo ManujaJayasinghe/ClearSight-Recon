@@ -6,38 +6,54 @@ import FormSectionNav from '../components/FormSectionNav'
 import FormSelect from '../components/FormSelect'
 import {
   INITIAL_WITNESS_FORM,
-  FACE_STRUCTURE_FIELDS,
   FORM_OPTIONS,
-  FIELD_LABELS,
+  REQUIRED_FIELDS,
 } from '../constants/witnessForm'
 import { FORM_SECTIONS } from '../constants/witnessFormSections'
-import { getFormProgress } from '../utils/witnessFormProgress'
+import {
+  getFormProgress,
+  validateRequiredFields,
+  getFirstSectionWithErrors,
+} from '../utils/witnessFormProgress'
 import './Page.css'
 import './WitnessFormPage.css'
 
-function FormTextarea({ id, name, label, value, onChange, placeholder }) {
+function FormTextarea({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  placeholder,
+  disabled = false,
+  required = false,
+  error,
+}) {
   return (
-    <div className="form-field form-field--full">
-      <label htmlFor={id}>{label}</label>
+    <div
+      className={`form-field form-field--full${error ? ' form-field--error' : ''}`}
+    >
+      <label htmlFor={id}>
+        {label}
+        {required ? <span className="form-field__required"> *</span> : null}
+      </label>
       <textarea
         id={id}
         name={name}
         value={value}
         onChange={onChange}
         placeholder={placeholder}
+        disabled={disabled}
+        aria-invalid={Boolean(error)}
+        aria-describedby={error ? `${id}-error` : undefined}
       />
+      {error ? (
+        <span id={`${id}-error`} className="form-field__error" role="alert">
+          {error}
+        </span>
+      ) : null}
     </div>
   )
-}
-
-function validateFaceStructure(form) {
-  const errors = {}
-  for (const field of FACE_STRUCTURE_FIELDS) {
-    if (!form[field]?.trim()) {
-      errors[field] = `${FIELD_LABELS[field]} is required`
-    }
-  }
-  return errors
 }
 
 function sectionDomId(sectionId) {
@@ -52,6 +68,11 @@ export default function WitnessFormPage() {
   const [openSectionId, setOpenSectionId] = useState(FORM_SECTIONS[0].id)
 
   const progress = useMemo(() => getFormProgress(form), [form])
+
+  const fieldProps = (name) => ({
+    required: REQUIRED_FIELDS.has(name),
+    error: fieldErrors[name],
+  })
 
   const scrollToSection = useCallback((sectionId) => {
     setOpenSectionId(sectionId)
@@ -76,7 +97,16 @@ export default function WitnessFormPage() {
 
   const handleChange = (e) => {
     const { name, value } = e.target
-    setForm((prev) => ({ ...prev, [name]: value }))
+    setForm((prev) => {
+      const next = { ...prev, [name]: value }
+      if (name === 'scarLocation' && value === 'None') {
+        next.scars = ''
+      }
+      if (name === 'birthmarkLocation' && value === 'None') {
+        next.birthmarks = ''
+      }
+      return next
+    })
     if (fieldErrors[name]) {
       setFieldErrors((prev) => {
         const next = { ...prev }
@@ -105,10 +135,11 @@ export default function WitnessFormPage() {
     e.preventDefault()
     setSubmitError('')
 
-    const errors = validateFaceStructure(form)
+    const errors = validateRequiredFields(form)
     if (Object.keys(errors).length > 0) {
       setFieldErrors(errors)
-      scrollToSection('face')
+      setSubmitError('Please complete all required fields before generating.')
+      scrollToSection(getFirstSectionWithErrors(errors))
       return
     }
 
@@ -122,14 +153,30 @@ export default function WitnessFormPage() {
         return (
           <>
             <FormSelect
+              id="gender"
+              name="gender"
+              label="Gender"
+              value={form.gender}
+              options={FORM_OPTIONS.gender}
+              onChange={handleChange}
+              {...fieldProps('gender')}
+            />
+            <FormSelect
+              id="ethnicity"
+              name="ethnicity"
+              label="Ethnicity / regional origin"
+              value={form.ethnicity}
+              options={FORM_OPTIONS.ethnicity}
+              onChange={handleChange}
+            />
+            <FormSelect
               id="faceShape"
               name="faceShape"
               label="Face shape"
               value={form.faceShape}
               options={FORM_OPTIONS.faceShape}
               onChange={handleChange}
-              required
-              error={fieldErrors.faceShape}
+              {...fieldProps('faceShape')}
             />
             <FormSelect
               id="skinTone"
@@ -138,8 +185,6 @@ export default function WitnessFormPage() {
               value={form.skinTone}
               options={FORM_OPTIONS.skinTone}
               onChange={handleChange}
-              required
-              error={fieldErrors.skinTone}
             />
             <FormSelect
               id="ageRange"
@@ -148,8 +193,22 @@ export default function WitnessFormPage() {
               value={form.ageRange}
               options={FORM_OPTIONS.ageRange}
               onChange={handleChange}
-              required
-              error={fieldErrors.ageRange}
+            />
+            <FormSelect
+              id="foreheadSize"
+              name="foreheadSize"
+              label="Forehead size"
+              value={form.foreheadSize}
+              options={FORM_OPTIONS.foreheadSize}
+              onChange={handleChange}
+            />
+            <FormSelect
+              id="foreheadShape"
+              name="foreheadShape"
+              label="Forehead shape"
+              value={form.foreheadShape}
+              options={FORM_OPTIONS.foreheadShape}
+              onChange={handleChange}
             />
           </>
         )
@@ -163,6 +222,7 @@ export default function WitnessFormPage() {
               value={form.eyeShape}
               options={FORM_OPTIONS.eyeShape}
               onChange={handleChange}
+              {...fieldProps('eyeShape')}
             />
             <FormSelect
               id="eyeColor"
@@ -171,6 +231,7 @@ export default function WitnessFormPage() {
               value={form.eyeColor}
               options={FORM_OPTIONS.eyeColor}
               onChange={handleChange}
+              {...fieldProps('eyeColor')}
             />
             <FormSelect
               id="eyeSize"
@@ -179,6 +240,34 @@ export default function WitnessFormPage() {
               value={form.eyeSize}
               options={FORM_OPTIONS.eyeSize}
               onChange={handleChange}
+              {...fieldProps('eyeSize')}
+            />
+            <FormSelect
+              id="eyebrowThickness"
+              name="eyebrowThickness"
+              label="Eyebrow thickness"
+              value={form.eyebrowThickness}
+              options={FORM_OPTIONS.eyebrowThickness}
+              onChange={handleChange}
+              {...fieldProps('eyebrowThickness')}
+            />
+            <FormSelect
+              id="eyebrowShape"
+              name="eyebrowShape"
+              label="Eyebrow shape"
+              value={form.eyebrowShape}
+              options={FORM_OPTIONS.eyebrowShape}
+              onChange={handleChange}
+              {...fieldProps('eyebrowShape')}
+            />
+            <FormSelect
+              id="eyebrowColor"
+              name="eyebrowColor"
+              label="Eyebrow color"
+              value={form.eyebrowColor}
+              options={FORM_OPTIONS.eyebrowColor}
+              onChange={handleChange}
+              {...fieldProps('eyebrowColor')}
             />
           </>
         )
@@ -192,6 +281,7 @@ export default function WitnessFormPage() {
               value={form.noseType}
               options={FORM_OPTIONS.noseType}
               onChange={handleChange}
+              {...fieldProps('noseType')}
             />
             <FormSelect
               id="noseSize"
@@ -200,6 +290,25 @@ export default function WitnessFormPage() {
               value={form.noseSize}
               options={FORM_OPTIONS.noseSize}
               onChange={handleChange}
+              {...fieldProps('noseSize')}
+            />
+            <FormSelect
+              id="nostrilWidth"
+              name="nostrilWidth"
+              label="Nostril width"
+              value={form.nostrilWidth}
+              options={FORM_OPTIONS.nostrilWidth}
+              onChange={handleChange}
+              {...fieldProps('nostrilWidth')}
+            />
+            <FormSelect
+              id="noseBridgeHeight"
+              name="noseBridgeHeight"
+              label="Nose bridge height"
+              value={form.noseBridgeHeight}
+              options={FORM_OPTIONS.noseBridgeHeight}
+              onChange={handleChange}
+              {...fieldProps('noseBridgeHeight')}
             />
           </>
         )
@@ -213,6 +322,7 @@ export default function WitnessFormPage() {
               value={form.lipThickness}
               options={FORM_OPTIONS.lipThickness}
               onChange={handleChange}
+              {...fieldProps('lipThickness')}
             />
             <FormSelect
               id="mouthWidth"
@@ -220,6 +330,83 @@ export default function WitnessFormPage() {
               label="Mouth width"
               value={form.mouthWidth}
               options={FORM_OPTIONS.mouthWidth}
+              onChange={handleChange}
+              {...fieldProps('mouthWidth')}
+            />
+            <FormSelect
+              id="lipColor"
+              name="lipColor"
+              label="Lip color"
+              value={form.lipColor}
+              options={FORM_OPTIONS.lipColor}
+              onChange={handleChange}
+              {...fieldProps('lipColor')}
+            />
+            <FormSelect
+              id="philtrumLength"
+              name="philtrumLength"
+              label="Philtrum length"
+              value={form.philtrumLength}
+              options={FORM_OPTIONS.philtrumLength}
+              onChange={handleChange}
+              {...fieldProps('philtrumLength')}
+            />
+          </>
+        )
+      case 'jawline':
+        return (
+          <>
+            <FormSelect
+              id="cheekboneProminence"
+              name="cheekboneProminence"
+              label="Cheekbone prominence"
+              value={form.cheekboneProminence}
+              options={FORM_OPTIONS.cheekboneProminence}
+              onChange={handleChange}
+            />
+            <FormSelect
+              id="jawShape"
+              name="jawShape"
+              label="Jaw shape"
+              value={form.jawShape}
+              options={FORM_OPTIONS.jawShape}
+              onChange={handleChange}
+            />
+            <FormSelect
+              id="jawWidth"
+              name="jawWidth"
+              label="Jaw width"
+              value={form.jawWidth}
+              options={FORM_OPTIONS.jawWidth}
+              onChange={handleChange}
+            />
+            <FormSelect
+              id="faceSymmetry"
+              name="faceSymmetry"
+              label="Face symmetry"
+              value={form.faceSymmetry}
+              options={FORM_OPTIONS.faceSymmetry}
+              onChange={handleChange}
+            />
+          </>
+        )
+      case 'ears':
+        return (
+          <>
+            <FormSelect
+              id="earSize"
+              name="earSize"
+              label="Ear size"
+              value={form.earSize}
+              options={FORM_OPTIONS.earSize}
+              onChange={handleChange}
+            />
+            <FormSelect
+              id="earProtrusion"
+              name="earProtrusion"
+              label="Ear protrusion"
+              value={form.earProtrusion}
+              options={FORM_OPTIONS.earProtrusion}
               onChange={handleChange}
             />
           </>
@@ -234,6 +421,7 @@ export default function WitnessFormPage() {
               value={form.hairColor}
               options={FORM_OPTIONS.hairColor}
               onChange={handleChange}
+              {...fieldProps('hairColor')}
             />
             <FormSelect
               id="hairLength"
@@ -242,6 +430,7 @@ export default function WitnessFormPage() {
               value={form.hairLength}
               options={FORM_OPTIONS.hairLength}
               onChange={handleChange}
+              {...fieldProps('hairLength')}
             />
             <FormSelect
               id="hairStyle"
@@ -250,6 +439,7 @@ export default function WitnessFormPage() {
               value={form.hairStyle}
               options={FORM_OPTIONS.hairStyle}
               onChange={handleChange}
+              {...fieldProps('hairStyle')}
             />
           </>
         )
@@ -262,18 +452,31 @@ export default function WitnessFormPage() {
             value={form.facialHair}
             options={FORM_OPTIONS.facialHair}
             onChange={handleChange}
+            {...fieldProps('facialHair')}
           />
         )
       case 'distinguishing':
         return (
           <>
+            <FormSelect
+              id="scarLocation"
+              name="scarLocation"
+              label="Scar location (on face)"
+              value={form.scarLocation}
+              options={FORM_OPTIONS.scarLocation}
+              onChange={handleChange}
+              placeholder="Select location"
+              {...fieldProps('scarLocation')}
+            />
             <FormTextarea
               id="scars"
               name="scars"
-              label="Scars (location and description)"
+              label="Scar description"
               value={form.scars}
               onChange={handleChange}
-              placeholder="e.g. scar on left cheek"
+              placeholder="e.g. long diagonal scar, small circular scar"
+              disabled={form.scarLocation === 'None'}
+              {...fieldProps('scars')}
             />
             <FormTextarea
               id="tattoos"
@@ -281,15 +484,28 @@ export default function WitnessFormPage() {
               label="Tattoos (location and type)"
               value={form.tattoos}
               onChange={handleChange}
-              placeholder="e.g. tribal tattoo on right forearm"
+              placeholder='e.g. tribal tattoo on right forearm, or "None"'
+              {...fieldProps('tattoos')}
+            />
+            <FormSelect
+              id="birthmarkLocation"
+              name="birthmarkLocation"
+              label="Birthmark / mole location"
+              value={form.birthmarkLocation}
+              options={FORM_OPTIONS.birthmarkLocation}
+              onChange={handleChange}
+              placeholder="Select location"
+              {...fieldProps('birthmarkLocation')}
             />
             <FormTextarea
               id="birthmarks"
               name="birthmarks"
-              label="Birthmarks or moles"
+              label="Birthmark / mole description"
               value={form.birthmarks}
               onChange={handleChange}
-              placeholder="e.g. mole below right eye"
+              placeholder="e.g. dark brown mole, small flat birthmark"
+              disabled={form.birthmarkLocation === 'None'}
+              {...fieldProps('birthmarks')}
             />
             <FormSelect
               id="glasses"
@@ -298,6 +514,7 @@ export default function WitnessFormPage() {
               value={form.glasses}
               options={FORM_OPTIONS.glasses}
               onChange={handleChange}
+              {...fieldProps('glasses')}
             />
             <FormTextarea
               id="otherFeatures"
@@ -305,7 +522,8 @@ export default function WitnessFormPage() {
               label="Other notable features"
               value={form.otherFeatures}
               onChange={handleChange}
-              placeholder="Any additional distinguishing details"
+              placeholder='Any additional details, or "None"'
+              {...fieldProps('otherFeatures')}
             />
           </>
         )
@@ -330,6 +548,27 @@ export default function WitnessFormPage() {
             />
           </>
         )
+      case 'neck':
+        return (
+          <>
+            <FormSelect
+              id="neckLength"
+              name="neckLength"
+              label="Neck length"
+              value={form.neckLength}
+              options={FORM_OPTIONS.neckLength}
+              onChange={handleChange}
+            />
+            <FormSelect
+              id="neckWidth"
+              name="neckWidth"
+              label="Neck width"
+              value={form.neckWidth}
+              options={FORM_OPTIONS.neckWidth}
+              onChange={handleChange}
+            />
+          </>
+        )
       default:
         return null
     }
@@ -341,8 +580,8 @@ export default function WitnessFormPage() {
         <span className="page__eyebrow">Step 1 — Intake</span>
         <h1 className="page__title">Witness Description Form</h1>
         <p className="page__description">
-          Complete each section below. Face structure is required before
-          generating a sketch. Use the section shortcuts to jump between groups.
+          Complete all required sections (marked with *) before generating a
+          sketch. Jawline, ears, build, and neck details are optional.
         </p>
       </header>
 
@@ -377,7 +616,11 @@ export default function WitnessFormPage() {
                 })
               }
             }}
-            isComplete={progress.completedIds.has(section.id)}
+            isComplete={
+              section.required
+                ? progress.completedIds.has(section.id)
+                : false
+            }
             isRequired={section.required}
             hasPrev={index > 0}
             hasNext={index < FORM_SECTIONS.length - 1}

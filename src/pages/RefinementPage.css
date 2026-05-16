@@ -1,11 +1,12 @@
 .refine-page {
-  max-width: 1200px;
+  width: 100%;
+  max-width: var(--page-wide);
 }
 
 .refine-workspace {
   display: grid;
-  grid-template-columns: minmax(300px, 1.1fr) minmax(280px, 0.9fr);
-  gap: 24px;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: var(--space-lg);
   align-items: start;
 }
 

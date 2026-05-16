@@ -1,7 +1,11 @@
-import { runFaceGeneration } from './generateFaceHandler.js'
+import {
+  runFaceGeneration,
+  runFaceGenerationVariations,
+} from './generateFaceHandler.js'
 import { isFalKeyConfigured } from './falEnv.js'
 
 const API_PATH = '/api/generate-face'
+const VARIATIONS_API_PATH = '/api/generate-face-variations'
 
 function readJsonBody(req) {
   return new Promise((resolve, reject) => {
@@ -38,9 +42,30 @@ async function handleGenerateFace(req, res) {
 
   try {
     const body = await readJsonBody(req)
-    const { imageUrl, requestId } = await runFaceGeneration(body)
-    sendJson(res, 200, { imageUrl, requestId })
+    const { imageUrl, seed } = await runFaceGeneration(body)
+    sendJson(res, 200, { imageUrl, seed })
   } catch (err) {
+    console.error('[fal-api] generate-face failed:', err)
+    const status = err.status ?? 500
+    sendJson(res, status, {
+      message: err.message ?? 'Face generation failed',
+      code: err.code ?? 'API',
+    })
+  }
+}
+
+async function handleGenerateFaceVariations(req, res) {
+  if (req.method !== 'POST') {
+    sendJson(res, 405, { message: 'Method not allowed' })
+    return
+  }
+
+  try {
+    const body = await readJsonBody(req)
+    const { imageUrls, seeds } = await runFaceGenerationVariations(body)
+    sendJson(res, 200, { imageUrls, seeds })
+  } catch (err) {
+    console.error('[fal-api] generate-face-variations failed:', err)
     const status = err.status ?? 500
     sendJson(res, status, {
       message: err.message ?? 'Face generation failed',
@@ -52,11 +77,15 @@ async function handleGenerateFace(req, res) {
 function attachFalApi(server) {
   server.middlewares.use(async (req, res, next) => {
     const pathname = req.url?.split('?')[0]
-    if (pathname !== API_PATH) {
-      next()
+    if (pathname === API_PATH) {
+      await handleGenerateFace(req, res)
       return
     }
-    await handleGenerateFace(req, res)
+    if (pathname === VARIATIONS_API_PATH) {
+      await handleGenerateFaceVariations(req, res)
+      return
+    }
+    next()
   })
 }
 

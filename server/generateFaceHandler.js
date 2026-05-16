@@ -1,8 +1,11 @@
 import { fal, ApiError } from '@fal-ai/client'
 import { buildPortraitPrompt } from '../src/utils/buildPortraitPrompt.js'
+import {
+  buildFalInput,
+  buildNegativePrompt,
+  FAL_MODEL_ID,
+} from '../src/utils/generateFace.js'
 import { getFalKey, isFalKeyConfigured } from './falEnv.js'
-
-const MODEL_ID = 'fal-ai/flux/schnell'
 
 function createHandlerError(message, { code, status, cause } = {}) {
   const error = new Error(message, { cause })
@@ -11,12 +14,35 @@ function createHandlerError(message, { code, status, cause } = {}) {
   return error
 }
 
+const FAL_REQUEST_TIMEOUT_MS = 5 * 60 * 1000
+
+function withTimeout(promise, ms, message) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error(message)), ms)
+    }),
+  ])
+}
+
+function formatFalError(err) {
+  if (err?.name === 'ValidationError' && typeof err.fieldErrors !== 'undefined') {
+    const details = err.fieldErrors
+      .map((e) => e.msg || JSON.stringify(e))
+      .filter(Boolean)
+      .join('; ')
+    if (details) {
+      return `Invalid generation request: ${details}`
+    }
+  }
+  return err.message || 'fal.ai request failed'
+}
+
 /**
- * Server-only: calls fal with FAL_KEY from .env (never sent to the browser).
- * @param {{ description?: object, prompt?: string }} body
- * @returns {Promise<{ imageUrl: string, requestId?: string }>}
+ * @param {{ description?: object, prompt?: string, negativePrompt?: string, view?: 'front' | 'side', seed?: number }} body
+ * @returns {Promise<{ imageUrls: string[], seed?: number }>}
  */
-export async function runFaceGeneration(body = {}) {
+async function executeFaceGeneration(body = {}) {
   if (!isFalKeyConfigured()) {
     throw createHandlerError(
       [
@@ -30,7 +56,6 @@ export async function runFaceGeneration(body = {}) {
   }
 
   const apiKey = getFalKey()
-
   fal.config({ credentials: apiKey })
 
   const prompt =
@@ -43,29 +68,43 @@ export async function runFaceGeneration(body = {}) {
     )
   }
 
+  const view = body.view === 'side' ? 'side' : 'front'
+  const negativePrompt =
+    body.negativePrompt?.trim() ||
+    buildNegativePrompt({ view, description: body.description ?? {} })
+
+  const falInput = buildFalInput({ prompt, negativePrompt })
+
+  // Seed: pass through if provided (keeps face identity stable across refinements)
+  if (typeof body.seed === 'number' && Number.isFinite(body.seed)) {
+    falInput.seed = body.seed
+  }
+
   try {
-    const result = await fal.subscribe(MODEL_ID, {
-      input: {
-        prompt,
-        image_size: { width: 768, height: 960 },
-        num_inference_steps: 4,
-        num_images: 1,
-        output_format: 'jpeg',
-        enable_safety_checker: true,
-      },
-      logs: false,
-    })
+    const result = await withTimeout(
+      fal.subscribe(FAL_MODEL_ID, {
+        input: falInput,
+        logs: false,
+      }),
+      FAL_REQUEST_TIMEOUT_MS,
+      'fal.ai request timed out after 5 minutes',
+    )
 
-    const imageUrl = result.data?.images?.[0]?.url
+    const imageUrls = (result.data?.images ?? [])
+      .map((image) => image?.url)
+      .filter((url) => typeof url === 'string' && url)
 
-    if (!imageUrl) {
-      throw createHandlerError('Model completed but returned no image URL.', {
+    if (imageUrls.length === 0) {
+      throw createHandlerError('Model completed but returned no image URLs.', {
         code: 'API',
         status: 502,
       })
     }
 
-    return { imageUrl, requestId: result.requestId }
+    const seed =
+      typeof result.data?.seed === 'number' ? result.data.seed : undefined
+
+    return { imageUrls, seed }
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
       throw createHandlerError(
@@ -75,7 +114,7 @@ export async function runFaceGeneration(body = {}) {
     }
 
     if (err instanceof ApiError) {
-      throw createHandlerError(err.message || 'fal.ai request failed', {
+      throw createHandlerError(formatFalError(err), {
         code: 'API',
         status: err.status || 502,
         cause: err,
@@ -84,4 +123,40 @@ export async function runFaceGeneration(body = {}) {
 
     throw err
   }
+}
+
+/**
+ * Server-only: calls fal with FAL_KEY from .env (never sent to the browser).
+ * @param {{ description?: object, prompt?: string, negativePrompt?: string, view?: 'front' | 'side', seed?: number }} body
+ * @returns {Promise<{ imageUrl: string, seed?: number, requestId?: string }>}
+ */
+export async function runFaceGeneration(body = {}) {
+  const { imageUrls, seed } = await executeFaceGeneration(body)
+  return { imageUrl: imageUrls[0], seed }
+}
+
+/**
+ * flux-realism allows only one image per request; run parallel jobs for variations.
+ * @param {{ description?: object, prompt?: string, negativePrompt?: string, view?: 'front' | 'side', count?: number }} body
+ * @returns {Promise<{ imageUrls: string[], seeds: (number|undefined)[] }>}
+ */
+export async function runFaceGenerationVariations(body = {}) {
+  const count = Math.max(1, Math.min(Math.floor(body.count) || 3, 4))
+
+  // Fire all requests in parallel for ~3× speed improvement
+  const results = await Promise.all(
+    Array.from({ length: count }, () => executeFaceGeneration(body)),
+  )
+
+  const imageUrls = results.map((r) => r.imageUrls[0]).filter(Boolean)
+  const seeds = results.map((r) => r.seed)
+
+  if (imageUrls.length === 0) {
+    throw createHandlerError('Model completed but returned no image URLs.', {
+      code: 'API',
+      status: 502,
+    })
+  }
+
+  return { imageUrls, seeds }
 }

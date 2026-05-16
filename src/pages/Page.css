@@ -1,7 +1,12 @@
 .page {
-  max-width: 960px;
+  width: 100%;
+  max-width: var(--page-max);
   margin: 0 auto;
   text-align: left;
+}
+
+.page--wide {
+  max-width: var(--page-wide);
 }
 
 .page__header {
@@ -170,8 +175,17 @@
 }
 
 .form-field textarea {
-  min-height: 100px;
+  min-height: 88px;
   resize: vertical;
+}
+
+.form-field input:disabled,
+.form-field select:disabled,
+.form-field textarea:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  background: var(--navy-950);
+  border-color: var(--navy-700);
 }
 
 .sketch-preview {
@@ -228,8 +242,29 @@
 
 .hero-card {
   display: flex;
-  gap: 24px;
+  gap: var(--space-lg);
   align-items: center;
+}
+
+@media (max-width: 640px) {
+  .hero-card {
+    flex-direction: column;
+    align-items: flex-start;
+    text-align: left;
+  }
+
+  .hero-card__icon {
+    align-self: center;
+  }
+
+  .hero-actions {
+    width: 100%;
+  }
+
+  .hero-actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
 }
 
 .hero-card__icon {
@@ -396,7 +431,11 @@
 }
 
 .pdf-preview-card__body--dual {
-  grid-template-columns: 1fr 220px;
+  grid-template-columns: minmax(0, 1fr) minmax(200px, 240px);
+}
+
+.pdf-export-page {
+  max-width: var(--page-wide);
 }
 
 .pdf-preview-card__sketches {
@@ -430,7 +469,7 @@
   background: var(--navy-900);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .pdf-preview-card__body {
     grid-template-columns: 1fr;
   }
@@ -438,6 +477,9 @@
   .pdf-preview-card__body--dual {
     grid-template-columns: 1fr;
   }
+}
+
+@media (max-width: 640px) {
 
   .pdf-preview-card__sketches {
     grid-template-columns: 1fr;

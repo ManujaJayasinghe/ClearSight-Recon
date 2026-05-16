@@ -25,12 +25,19 @@ const STATUS_MESSAGES = {
   [GenerationStatus.REQUESTING]: 'Regenerating composite…',
 }
 
-function createHistoryEntry(imageUrl, description, label) {
+/**
+ * @param {string} imageUrl
+ * @param {object} description
+ * @param {string} label
+ * @param {number|undefined} seed  fal.ai seed — kept so refinements reuse the same face identity
+ */
+function createHistoryEntry(imageUrl, description, label, seed) {
   return {
     id: crypto.randomUUID(),
     imageUrl,
     description: { ...description },
     label,
+    seed,
   }
 }
 
@@ -56,10 +63,11 @@ export default function RefinementPage() {
   const [{ history, activeId }, setSession] = useState(() => {
     const imageUrl = location.state?.imageUrl
     const description = location.state?.description
+    const seed = location.state?.seed
     if (!imageUrl || !description) {
       return { history: [], activeId: null }
     }
-    const entry = createHistoryEntry(imageUrl, description, 'Original')
+    const entry = createHistoryEntry(imageUrl, description, 'Original', seed)
     return { history: [entry], activeId: entry.id }
   })
   const [isGenerating, setIsGenerating] = useState(false)
@@ -74,8 +82,14 @@ export default function RefinementPage() {
   const activeEntry =
     history.find((e) => e.id === activeId) ?? history[history.length - 1] ?? null
 
+  /**
+   * Regenerate the composite, optionally locking face identity via seed.
+   * @param {object} description
+   * @param {string} label
+   * @param {number|undefined} seed  Pass activeEntry.seed to preserve face identity
+   */
   const regenerate = useCallback(
-    async (description, label) => {
+    async (description, label, seed) => {
       if (generateBusyRef.current) return
 
       generateBusyRef.current = true
@@ -84,13 +98,14 @@ export default function RefinementPage() {
       setStatusMessage(STATUS_MESSAGES[GenerationStatus.BUILDING_PROMPT])
 
       try {
-        const imageUrl = await generateFace(description, {
+        const { imageUrl, seed: returnedSeed } = await generateFace(description, {
+          seed,
           onStatusChange: (status) => {
             setStatusMessage(STATUS_MESSAGES[status] ?? 'Processing…')
           },
         })
 
-        const entry = createHistoryEntry(imageUrl, description, label)
+        const entry = createHistoryEntry(imageUrl, description, label, returnedSeed ?? seed)
         setSession((prev) => {
           const nextHistory = [...prev.history, entry].slice(-MAX_HISTORY)
           return { history: nextHistory, activeId: entry.id }
@@ -115,7 +130,8 @@ export default function RefinementPage() {
     (actionId) => {
       if (!activeEntry || isGenerating || generateBusyRef.current) return
       const updated = applyRefinement(activeEntry.description, actionId)
-      regenerate(updated, getRefinementLabel(actionId))
+      // Pass the current entry's seed to keep face identity stable across adjustments
+      regenerate(updated, getRefinementLabel(actionId), activeEntry.seed)
     },
     [activeEntry, isGenerating, regenerate],
   )
@@ -124,7 +140,10 @@ export default function RefinementPage() {
     function onKeyDown(e) {
       if (isGenerating || !activeEntry || generateBusyRef.current) return
       if (!e.altKey || e.ctrlKey || e.metaKey) return
-      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+      if (
+        e.target instanceof HTMLInputElement ||
+        e.target instanceof HTMLTextAreaElement
+      ) {
         return
       }
 
@@ -166,7 +185,7 @@ export default function RefinementPage() {
 
   if (!incomingImageUrl || !incomingDescription) {
     return (
-      <article className="page refine-page">
+      <article className="page page--wide refine-page">
         <header className="page__header">
           <span className="page__eyebrow">Step 3 — Refinement</span>
           <h1 className="page__title">Sketch Refinement</h1>
@@ -182,7 +201,7 @@ export default function RefinementPage() {
   }
 
   return (
-    <article className="page refine-page">
+    <article className="page page--wide refine-page">
       <header className="page__header">
         <span className="page__eyebrow">Step 3 — Refinement</span>
         <h1 className="page__title">Sketch Refinement</h1>

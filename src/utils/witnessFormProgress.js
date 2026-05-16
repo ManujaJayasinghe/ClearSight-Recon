@@ -1,24 +1,84 @@
+import { FIELD_LABELS, REQUIRED_FIELDS } from '../constants/witnessForm.js'
 import { FORM_SECTIONS } from '../constants/witnessFormSections.js'
+
+/** @type {Record<string, string>} */
+const FIELD_SATISFIED_BY_NONE = {
+  scars: 'scarLocation',
+  birthmarks: 'birthmarkLocation',
+}
+
+/**
+ * @param {Record<string, string>} form
+ * @param {string} field
+ */
+export function isFieldComplete(form, field) {
+  if (form[field]?.trim()) return true
+  const noneParent = FIELD_SATISFIED_BY_NONE[field]
+  return noneParent != null && form[noneParent] === 'None'
+}
+
+/**
+ * @param {{ fields: string[] }} section
+ */
+function getRequiredFieldsInSection(section) {
+  return section.fields.filter((field) => REQUIRED_FIELDS.has(field))
+}
 
 /**
  * @param {Record<string, string>} form
  * @param {{ fields: string[] }} section
  */
 export function isSectionComplete(form, section) {
-  return section.fields.every((field) => Boolean(form[field]?.trim()))
+  const required = getRequiredFieldsInSection(section)
+  if (required.length === 0) return false
+  return required.every((field) => isFieldComplete(form, field))
 }
 
 /**
  * @param {Record<string, string>} form
  */
 export function getFormProgress(form) {
-  const completed = FORM_SECTIONS.filter((section) =>
+  const requiredSections = FORM_SECTIONS.filter(
+    (section) => getRequiredFieldsInSection(section).length > 0,
+  )
+  const completed = requiredSections.filter((section) =>
     isSectionComplete(form, section),
   )
   return {
     completedCount: completed.length,
-    totalCount: FORM_SECTIONS.length,
-    percent: Math.round((completed.length / FORM_SECTIONS.length) * 100),
+    totalCount: requiredSections.length,
+    percent: requiredSections.length
+      ? Math.round((completed.length / requiredSections.length) * 100)
+      : 100,
     completedIds: new Set(completed.map((s) => s.id)),
   }
+}
+
+/**
+ * @param {Record<string, string>} form
+ * @returns {Record<string, string>}
+ */
+export function validateRequiredFields(form) {
+  const errors = {}
+  for (const field of REQUIRED_FIELDS) {
+    if (!isFieldComplete(form, field)) {
+      const label = FIELD_LABELS[field] ?? field
+      const formatted =
+        label.charAt(0).toUpperCase() + label.slice(1)
+      errors[field] = `${formatted} is required`
+    }
+  }
+  return errors
+}
+
+/**
+ * @param {Record<string, string>} errors
+ */
+export function getFirstSectionWithErrors(errors) {
+  for (const section of FORM_SECTIONS) {
+    if (section.fields.some((field) => errors[field])) {
+      return section.id
+    }
+  }
+  return FORM_SECTIONS[0].id
 }
