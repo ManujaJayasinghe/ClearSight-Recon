@@ -143,6 +143,16 @@
 .refine-btn:hover:not(:disabled) {
   background: var(--navy-700);
   border-color: var(--gold);
+  transform: translateY(-1px);
+}
+
+.refine-btn:active:not(:disabled) {
+  transform: translateY(0) scale(0.98);
+}
+
+.refine-btn:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .refine-btn:disabled,
@@ -227,7 +237,13 @@
 }
 
 .refine-history__thumb:hover:not(:disabled) {
-  border-color: var(--navy-500);
+  border-color: var(--gold);
+  box-shadow: 0 0 0 1px rgba(201, 162, 39, 0.15);
+}
+
+.refine-history__thumb:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 2px;
 }
 
 .refine-history__thumb--active {

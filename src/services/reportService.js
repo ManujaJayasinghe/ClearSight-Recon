@@ -4,6 +4,7 @@ import {
   getLocalReports,
   saveLocalReport,
 } from './localReportStore'
+import { saveReport as saveToMatchingIndex } from './reportStorage'
 
 const TABLE = 'criminal_reports'
 const MAX_CASE_NUMBER_ATTEMPTS = 5
@@ -122,12 +123,19 @@ export async function saveReport(
   }
 
   if (!isSupabaseConfigured()) {
-    return saveLocalReport({
+    const saved = saveLocalReport({
       ...row,
       id: crypto.randomUUID(),
       case_number: generateCaseNumber(),
       created_at: new Date().toISOString(),
     })
+    saveToMatchingIndex({
+      reportId: saved.id,
+      caseNumber: saved.case_number,
+      descriptors,
+      imageUrl: imageUrl.trim(),
+    })
+    return saved
   }
 
   let lastError = null
@@ -142,6 +150,12 @@ export async function saveReport(
       .single()
 
     if (!error) {
+      saveToMatchingIndex({
+        reportId: data.id,
+        caseNumber: data.case_number,
+        descriptors,
+        imageUrl: imageUrl.trim(),
+      })
       return data
     }
 

@@ -1,0 +1,50 @@
+/* Shared match severity indicators (exact = red, high = orange, possible = yellow) */
+
+.match-severity-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 10px;
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  border-radius: 999px;
+  line-height: 1.2;
+}
+
+.match-severity-pill::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.match-severity-pill--exact {
+  color: #fff;
+  background: #dc2626;
+}
+
+.match-severity-pill--exact::before {
+  background: #fff;
+}
+
+.match-severity-pill--high {
+  color: #fff;
+  background: #ea580c;
+}
+
+.match-severity-pill--high::before {
+  background: #fff;
+}
+
+.match-severity-pill--possible {
+  color: var(--navy-950);
+  background: #eab308;
+}
+
+.match-severity-pill--possible::before {
+  background: var(--navy-950);
+}

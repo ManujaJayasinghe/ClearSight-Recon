@@ -10,9 +10,11 @@
   z-index: 20;
   background: linear-gradient(
     180deg,
-    var(--navy-950) 65%,
+    var(--navy-950) 70%,
     transparent 100%
   );
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 }
 
 .app-header__spacer {

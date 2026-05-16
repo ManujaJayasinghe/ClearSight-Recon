@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import CompositeImage from '../components/CompositeImage'
 import { getAllReports, isUsingLocalReportStorage } from '../services/reportService'
+import { isSupabaseError } from '../utils/isSupabaseError'
 import {
   formatReportDateShort,
   getCardDescriptorSummary,
@@ -46,6 +47,7 @@ export default function ReportsPage() {
   const [error, setError] = useState('')
   const [search, setSearch] = useState('')
   const [sort, setSort] = useState(SORT_NEWEST)
+  const [reloadKey, setReloadKey] = useState(0)
 
   const localStorageMode = isUsingLocalReportStorage()
 
@@ -60,7 +62,12 @@ export default function ReportsPage() {
         if (!cancelled) setReports(data)
       } catch (err) {
         if (!cancelled) {
-          setError(err?.message ?? 'Failed to load criminal reports.')
+          const message = err?.message ?? 'Failed to load criminal reports.'
+          setError(
+            isSupabaseError(err)
+              ? `${message} Verify Supabase credentials in .env and run supabase/criminal_reports.sql.`
+              : message,
+          )
           setReports([])
         }
       } finally {
@@ -72,7 +79,7 @@ export default function ReportsPage() {
     return () => {
       cancelled = true
     }
-  }, [])
+  }, [reloadKey])
 
   const filteredReports = useMemo(() => {
     const query = search.trim()
@@ -153,9 +160,16 @@ export default function ReportsPage() {
       ) : null}
 
       {error ? (
-        <p className="form-submit-error" role="alert">
-          {error}
-        </p>
+        <div className="page__card reports-page__error" role="alert">
+          <p className="form-submit-error">{error}</p>
+          <button
+            type="button"
+            className="btn btn--secondary"
+            onClick={() => setReloadKey((k) => k + 1)}
+          >
+            {t('reports.retry', 'Retry')}
+          </button>
+        </div>
       ) : null}
 
       {!loading && !error && filteredReports.length === 0 ? (

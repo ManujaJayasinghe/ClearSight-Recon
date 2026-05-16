@@ -1,6 +1,6 @@
 import { useMemo, useState, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import CollapsibleFormSection from '../components/CollapsibleFormSection'
 import FormProgressBar from '../components/FormProgressBar'
 import FormSectionNav from '../components/FormSectionNav'
@@ -17,6 +17,10 @@ import {
   validateRequiredFields,
   getFirstSectionWithErrors,
 } from '../utils/witnessFormProgress'
+import {
+  loadPersistedWitnessDescription,
+  persistWitnessDescription,
+} from '../utils/witnessFormStorage'
 import './Page.css'
 import './WitnessFormPage.css'
 
@@ -64,8 +68,15 @@ function sectionDomId(sectionId) {
 
 export default function WitnessFormPage() {
   const { t } = useTranslation()
+  const location = useLocation()
   const navigate = useNavigate()
-  const [form, setForm] = useState(INITIAL_WITNESS_FORM)
+  const restoredDescription =
+    location.state?.description ?? loadPersistedWitnessDescription()
+  const [form, setForm] = useState(() =>
+    restoredDescription
+      ? { ...INITIAL_WITNESS_FORM, ...restoredDescription }
+      : INITIAL_WITNESS_FORM,
+  )
   const [fieldErrors, setFieldErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
   const [openSectionId, setOpenSectionId] = useState(FORM_SECTIONS[0].id)
@@ -147,6 +158,7 @@ export default function WitnessFormPage() {
     }
 
     setFieldErrors({})
+    persistWitnessDescription(form)
     navigate('/result', { state: { description: form } })
   }
 

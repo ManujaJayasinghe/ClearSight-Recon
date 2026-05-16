@@ -20,8 +20,26 @@
   background: var(--navy-900);
   border: 1px solid var(--navy-600);
   border-radius: var(--radius);
-  box-shadow: 0 24px 56px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    0 24px 56px rgba(0, 0, 0, 0.55),
+    0 0 0 1px rgba(255, 255, 255, 0.04);
   overflow: hidden;
+  animation: match-modal-enter 0.2s ease;
+}
+
+@keyframes match-modal-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.99);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .match-modal { animation: none; }
 }
 
 /* —— Header (tier from highest-scoring match) —— */

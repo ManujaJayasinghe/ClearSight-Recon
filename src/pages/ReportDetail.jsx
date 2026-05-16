@@ -5,6 +5,7 @@ import CompositeImage from '../components/CompositeImage'
 import { INITIAL_WITNESS_FORM } from '../constants/witnessForm'
 import { translateFieldLabel, translateFormOption } from '../i18n/formOption'
 import { deleteReport, getReportById } from '../services/reportStorage'
+import '../styles/matchSeverity.css'
 import './Page.css'
 import './ReportDetail.css'
 
@@ -162,6 +163,15 @@ export default function ReportDetail() {
           className={`report-detail__match-banner report-detail__match-banner--${matchContext.matchType ?? 'possible'}`}
           role="status"
         >
+          <span
+            className={`match-severity-pill match-severity-pill--${matchContext.matchType ?? 'possible'}`}
+          >
+            {matchContext.matchType === 'exact'
+              ? t('match.typeExact', 'Exact Match')
+              : matchContext.matchType === 'high'
+                ? t('match.typeHigh', 'High Match')
+                : t('match.typePossible', 'Possible Match')}
+          </span>
           <p className="report-detail__match-score">
             {t('reportDetail.matchScore', 'Match score')}:{' '}
             <strong>{matchContext.matchScore}%</strong>

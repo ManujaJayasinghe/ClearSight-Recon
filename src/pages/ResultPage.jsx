@@ -4,7 +4,7 @@ import i18n from '../i18n'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import CompositeImage from '../components/CompositeImage'
 import CompositeLoading from '../components/CompositeLoading'
-import ShieldIcon from '../components/ShieldIcon'
+import Logo from '../components/Logo'
 import { useToast } from '../context/useToast'
 import { SITE_NAME } from '../constants/site'
 import { generateCaseReference } from '../utils/caseReference'
@@ -18,6 +18,11 @@ import { buildWitnessSummarySections } from '../utils/witnessSummary'
 import SaveReportModal from '../components/SaveReportModal'
 import MatchModal from '../components/MatchModal'
 import { findMatches } from '../services/matchingService'
+import { formatGenerationError } from '../utils/formatGenerationError'
+import {
+  loadPersistedWitnessDescription,
+  persistWitnessDescription,
+} from '../utils/witnessFormStorage'
 import './ResultPage.css'
 
 const VARIATION_COUNT = 3
@@ -63,7 +68,8 @@ export default function ResultPage() {
   const location = useLocation()
   const navigate = useNavigate()
   const { showToast } = useToast()
-  const description = location.state?.description
+  const description =
+    location.state?.description ?? loadPersistedWitnessDescription()
   const sideBusyRef = useRef(false)
   const frontBusyRef = useRef(false)
 
@@ -94,6 +100,12 @@ export default function ResultPage() {
   )
 
   useEffect(() => {
+    if (description) {
+      persistWitnessDescription(description)
+    }
+  }, [description])
+
+  useEffect(() => {
     setReportSaved(false)
   }, [selectedVariationIndex])
 
@@ -117,8 +129,9 @@ export default function ResultPage() {
         } else {
           setProceedToGenerate(true)
         }
-      } catch {
+      } catch (err) {
         if (!cancelled) {
+          console.warn('[match] Database check failed:', err)
           setProceedToGenerate(true)
         }
       }
@@ -167,9 +180,9 @@ export default function ResultPage() {
         showToast(t('result.toastVariations', { count: urls.length }))
       } catch (err) {
         if (cancelled) return
-        setErrorMessage(err?.message ?? t('result.errorFront'))
+        setErrorMessage(formatGenerationError(err))
         setPhase('error')
-        showToast(t('result.toastFrontFailed'), 'error')
+        showToast(formatGenerationError(err), 'error')
       } finally {
         frontBusyRef.current = false
       }
@@ -218,7 +231,7 @@ export default function ResultPage() {
       setSidePhase('success')
       showToast(t('result.toastSideSuccess'))
     } catch (err) {
-      setSideErrorMessage(err?.message ?? t('result.errorSide'))
+      setSideErrorMessage(formatGenerationError(err))
       setSidePhase('error')
       showToast(t('result.toastSideFailed'), 'error')
     } finally {
@@ -307,7 +320,7 @@ export default function ResultPage() {
           <header className="result-report__banner">
             <div className="result-report__brand">
               <span className="result-report__brand-icon" aria-hidden="true">
-                <ShieldIcon size={40} />
+                <Logo size={44} />
               </span>
               <div>
                 <span className="result-report__dept">{SITE_NAME}</span>
@@ -411,15 +424,30 @@ export default function ResultPage() {
                         <p className="result-report__error-message">
                           {errorMessage}
                         </p>
-                        <button
-                          type="button"
-                          className={`btn btn--primary${phase === 'loading' ? ' btn--loading' : ''}`}
-                          onClick={handleRetryFront}
-                          disabled={phase === 'loading'}
-                          aria-busy={phase === 'loading'}
-                        >
-                          {t('result.tryAgain')}
-                        </button>
+                        <p className="result-report__error-hint">
+                          {t(
+                            'result.errorDataPreserved',
+                            'Your witness description is still saved. Retry generation or edit the form — nothing was lost.',
+                          )}
+                        </p>
+                        <div className="result-report__error-actions">
+                          <button
+                            type="button"
+                            className={`btn btn--primary${phase === 'loading' ? ' btn--loading' : ''}`}
+                            onClick={handleRetryFront}
+                            disabled={phase === 'loading'}
+                            aria-busy={phase === 'loading'}
+                          >
+                            {t('result.tryAgain', 'Retry generation')}
+                          </button>
+                          <Link
+                            to="/form"
+                            state={{ description }}
+                            className="btn btn--secondary"
+                          >
+                            {t('result.editForm', 'Edit witness form')}
+                          </Link>
+                        </div>
                       </div>
                     ) : null}
                     {phase === 'success' && imageUrl ? (

@@ -1,6 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { translateFieldLabel } from '../i18n/formOption'
-import ShieldIcon from './ShieldIcon'
+import Logo from './Logo'
+import '../styles/matchSeverity.css'
 import './MatchModal.css'
 
 /** @type {Record<string, string>} DB column → witness form field key */
@@ -38,6 +39,12 @@ const MATCH_TYPE_LABEL = {
   exact: { key: 'match.typeExact', default: 'Exact Match' },
   high: { key: 'match.typeHigh', default: 'High Match' },
   possible: { key: 'match.typePossible', default: 'Possible Match' },
+}
+
+const SEVERITY_ARIA = {
+  exact: 'Exact match — highest severity',
+  high: 'High match — similar suspect',
+  possible: 'Possible match — review recommended',
 }
 
 /**
@@ -117,7 +124,7 @@ export default function MatchModal({
           className={`match-modal__header match-modal__header--${headerType}`}
         >
           <div className="match-modal__header-inner">
-            <ShieldIcon size={36} className="match-modal__shield" />
+            <Logo size={40} className="match-modal__logo" />
             <div className="match-modal__header-text">
               <h2 id="match-modal-title" className="match-modal__title">
                 {t(headerCopy.titleKey, headerCopy.titleDefault)}
@@ -157,9 +164,18 @@ export default function MatchModal({
                 <li
                   key={reportId}
                   className={`match-modal-card match-modal-card--${matchType}`}
+                  aria-label={`${SEVERITY_ARIA[matchType] ?? 'Match'}: ${caseNumber}, ${matchScore}%`}
                 >
                   <div className="match-modal-card__top">
                     <div className="match-modal-card__identity">
+                      <span
+                        className={`match-severity-pill match-severity-pill--${matchType}`}
+                      >
+                        {t(
+                          MATCH_TYPE_LABEL[matchType]?.key,
+                          MATCH_TYPE_LABEL[matchType]?.default,
+                        )}
+                      </span>
                       <p className="match-modal-card__case">
                         {caseNumber || '—'}
                       </p>
@@ -174,7 +190,9 @@ export default function MatchModal({
                       >
                         {matchScore}% {t('match.matchLabel', 'MATCH')}
                       </span>
-                      <span className="match-modal-card__type-label">
+                      <span
+                        className={`match-modal-card__type-label match-modal-card__type-label--${matchType}`}
+                      >
                         {t(
                           MATCH_TYPE_LABEL[matchType]?.key,
                           MATCH_TYPE_LABEL[matchType]?.default,

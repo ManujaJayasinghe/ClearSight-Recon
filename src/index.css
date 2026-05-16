@@ -9,9 +9,12 @@
   --white: #f8fafc;
   --slate-300: #94a3b8;
   --slate-400: #64748b;
+  --slate-500: #475569;
 
   --gold: #c9a227;
   --gold-light: #dbb84a;
+  --gold-dim: rgba(201, 162, 39, 0.15);
+  --gold-glow: rgba(201, 162, 39, 0.25);
 
   --success: #22c55e;
 
@@ -73,4 +76,15 @@ button {
 img {
   max-width: 100%;
   height: auto;
+}
+
+/* Improve default focus ring globally */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Remove default outline when focus-visible is handled per-component */
+:focus:not(:focus-visible) {
+  outline: none;
 }

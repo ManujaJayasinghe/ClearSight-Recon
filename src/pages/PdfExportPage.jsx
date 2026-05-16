@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import CompositeImage from '../components/CompositeImage'
 import ExportPDF from '../components/ExportPDF'
-import ShieldIcon from '../components/ShieldIcon'
+import Logo from '../components/Logo'
 import { useToast } from '../context/useToast'
 import { DEFAULT_CASE_ID, SITE_NAME } from '../constants/site'
 import { translateFormOption } from '../i18n/formOption'
@@ -42,7 +42,7 @@ export default function PdfExportPage() {
 
       <div className="page__card pdf-preview-card">
         <div className="pdf-preview-card__header">
-          <ShieldIcon size={32} />
+          <Logo size={40} />
           <div>
             <span className="pdf-preview-card__dept">{SITE_NAME}</span>
             <span className="pdf-preview-card__title">{t('pdf.officialReport')}</span>

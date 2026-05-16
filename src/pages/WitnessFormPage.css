@@ -61,9 +61,40 @@
 
 .form-progress__fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--navy-500), var(--gold));
+  background: linear-gradient(
+    90deg,
+    var(--navy-500) 0%,
+    var(--gold) 60%,
+    var(--gold-light) 100%
+  );
   border-radius: 999px;
-  transition: width 0.35s ease;
+  transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.form-progress__fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.18) 50%,
+    transparent 100%
+  );
+  animation: progress-shimmer 2.2s ease-in-out infinite;
+}
+
+@keyframes progress-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .form-progress__fill::after {
+    display: none;
+  }
 }
 
 .form-section-nav ul {
@@ -135,6 +166,12 @@
   text-align: left;
   font-family: inherit;
   color: inherit;
+  transition: background 0.18s ease;
+  border-radius: 4px 4px 0 0;
+}
+
+.collapsible-section__trigger:hover {
+  background: rgba(255, 255, 255, 0.03);
 }
 
 .collapsible-section__trigger:focus-visible {

@@ -11,6 +11,7 @@ import {
 import { useToast } from '../context/useToast'
 import { generateCaseReference } from '../utils/caseReference'
 import { generateFace, GenerationStatus } from '../utils/generateFace'
+import { formatGenerationError } from '../utils/formatGenerationError'
 import {
   applyRefinement,
   getRefinementLabel,
@@ -117,10 +118,8 @@ export default function RefinementPage() {
         })
         showToast(t('refine.sketchUpdated', { label }))
       } catch (err) {
-        setErrorMessage(
-          err?.message ?? t('refine.regenFailed')
-        )
-        showToast(t('refine.regenFailedToast'), 'error')
+        setErrorMessage(formatGenerationError(err))
+        showToast(formatGenerationError(err), 'error')
       } finally {
         setIsGenerating(false)
         setStatusMessage('')

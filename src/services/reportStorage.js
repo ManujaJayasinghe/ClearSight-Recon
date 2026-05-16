@@ -17,6 +17,7 @@ function writeAll(reports) {
 
 /**
  * @param {{
+ *   reportId?: string,
  *   caseNumber: string,
  *   descriptors: Record<string, string>,
  *   imageUrl: string,
@@ -32,7 +33,7 @@ function writeAll(reports) {
  */
 export function saveReport(data) {
   const report = {
-    reportId: crypto.randomUUID(),
+    reportId: data.reportId ?? crypto.randomUUID(),
     caseNumber: data.caseNumber ?? '',
     createdDate: new Date().toISOString(),
     descriptors: data.descriptors ?? {},

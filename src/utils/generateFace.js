@@ -502,41 +502,109 @@ function assertOkResponse(response, data) {
 }
 
 const GENERATION_FETCH_TIMEOUT_MS = 6 * 60 * 1000
+const POLL_INTERVAL_MS = 2500
+const SUBMIT_TIMEOUT_MS = 30 * 1000
 
-async function postGenerationRequest(endpoint, payload) {
+function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+async function fetchJson(url, options = {}) {
   const controller = new AbortController()
-  const timeoutId = setTimeout(() => controller.abort(), GENERATION_FETCH_TIMEOUT_MS)
+  const timeoutMs = options.timeoutMs ?? GENERATION_FETCH_TIMEOUT_MS
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 
-  let response
   try {
-    response = await fetch(endpoint, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
+    const response = await fetch(url, {
+      ...options,
       signal: controller.signal,
     })
+    let data = {}
+    try {
+      data = await response.json()
+    } catch {
+      data = {}
+    }
+    assertOkResponse(response, data)
+    return data
   } catch (cause) {
     const isAbort = cause?.name === 'AbortError'
     const detail = cause?.message ?? 'Network error'
     throw new FaceGenerationError(
       isAbort
-        ? 'Generation timed out. Each variation can take 1–2 minutes; try again.'
+        ? 'Generation timed out. Each variation can take 1–2 minutes; use Retry to try again.'
         : `Could not reach the generation service (${detail}). Start the app with "npm run dev".`,
-      { code: 'NETWORK', cause },
+      { code: isAbort ? 'TIMEOUT' : 'NETWORK', cause },
     )
   } finally {
     clearTimeout(timeoutId)
   }
+}
 
-  let data = {}
-  try {
-    data = await response.json()
-  } catch {
-    data = {}
+/**
+ * Async queue flow: submit returns immediately; client polls status (Vercel-safe).
+ * @param {string} baseEndpoint e.g. /api/generate-face-variations
+ * @param {object} payload
+ * @param {{ onQueueUpdate?: (info: { status: string, jobs?: object[] }) => void }} [options]
+ */
+async function postGenerationRequestAsync(baseEndpoint, payload, { onQueueUpdate } = {}) {
+  const submitData = await fetchJson(`${baseEndpoint}/submit`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+    timeoutMs: SUBMIT_TIMEOUT_MS,
+  })
+
+  const requestIds = Array.isArray(submitData.requestIds)
+    ? submitData.requestIds
+    : submitData.requestId
+      ? [submitData.requestId]
+      : []
+
+  if (requestIds.length === 0) {
+    throw new FaceGenerationError('Server did not return fal.ai request IDs.', {
+      code: 'API',
+      details: submitData,
+    })
   }
 
-  assertOkResponse(response, data)
-  return data
+  const pollStarted = Date.now()
+
+  while (Date.now() - pollStarted < GENERATION_FETCH_TIMEOUT_MS) {
+    const statusData = await fetchJson(
+      `${baseEndpoint}/status?requestIds=${encodeURIComponent(requestIds.join(','))}`,
+      { method: 'GET', timeoutMs: SUBMIT_TIMEOUT_MS },
+    )
+
+    onQueueUpdate?.(statusData)
+
+    if (statusData.status === 'failed') {
+      throw new FaceGenerationError(
+        statusData.message ?? 'fal.ai reported that generation failed.',
+        { code: 'API', details: statusData },
+      )
+    }
+
+    if (statusData.status === 'completed') {
+      return statusData
+    }
+
+    await sleep(POLL_INTERVAL_MS)
+  }
+
+  throw new FaceGenerationError(
+    'Generation timed out while waiting for fal.ai. Use Retry to try again.',
+    { code: 'TIMEOUT' },
+  )
+}
+
+/** @deprecated Long-poll path; prefer async submit/status in production. */
+async function postGenerationRequest(endpoint, payload) {
+  return fetchJson(endpoint, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
 }
 
 // ─── Public generation functions ──────────────────────────────────────────────
@@ -572,13 +640,23 @@ export async function generateFaceVariations(
 
     setStatus(GenerationStatus.REQUESTING)
 
-    const data = await postGenerationRequest('/api/generate-face-variations', {
-      description,
-      prompt,
-      negativePrompt,
-      view,
-      count,
-    })
+    const data = await postGenerationRequestAsync(
+      '/api/generate-face-variations',
+      {
+        description,
+        prompt,
+        negativePrompt,
+        view,
+        count,
+      },
+      {
+        onQueueUpdate: (info) => {
+          if (info?.status === 'in_queue' || info?.status === 'in_progress') {
+            setStatus(GenerationStatus.REQUESTING)
+          }
+        },
+      },
+    )
 
     const imageUrls = data.imageUrls
     if (!Array.isArray(imageUrls) || imageUrls.length === 0) {
@@ -640,13 +718,23 @@ export async function generateFace(
 
     setStatus(GenerationStatus.REQUESTING)
 
-    const data = await postGenerationRequest('/api/generate-face', {
-      description,
-      prompt,
-      negativePrompt,
-      view,
-      seed,
-    })
+    const data = await postGenerationRequestAsync(
+      '/api/generate-face',
+      {
+        description,
+        prompt,
+        negativePrompt,
+        view,
+        seed,
+      },
+      {
+        onQueueUpdate: (info) => {
+          if (info?.status === 'in_queue' || info?.status === 'in_progress') {
+            setStatus(GenerationStatus.REQUESTING)
+          }
+        },
+      },
+    )
 
     const imageUrl = data.imageUrl
     if (!imageUrl || typeof imageUrl !== 'string') {

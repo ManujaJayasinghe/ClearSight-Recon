@@ -1,4 +1,5 @@
-import { getAllReports } from './reportStorage'
+import { getAllReports as getCriminalReports } from './reportService'
+import { getAllReports as getSketchaiReports } from './reportStorage'
 
 /** Fields compared during witness-to-report matching (DB snake_case + form camelCase). */
 const MATCH_FIELDS = [
@@ -15,8 +16,6 @@ const MATCH_FIELDS = [
   { key: 'height', formKey: 'height' },
   { key: 'glasses', formKey: 'glasses' },
 ]
-
-const TOTAL_FIELDS = MATCH_FIELDS.length
 
 /**
  * @param {unknown} value
@@ -63,34 +62,94 @@ function getMatchType(score) {
 }
 
 /**
+ * @param {object} report
+ */
+function normalizeStoredReport(report) {
+  if (!report || typeof report !== 'object') return null
+
+  const reportId = report.reportId ?? report.id
+  if (!reportId) return null
+
+  const caseNumber = report.caseNumber ?? report.case_number ?? ''
+  const createdDate = report.createdDate ?? report.created_at ?? ''
+
+  // PDF index uses nested descriptors; criminal_reports rows use snake_case on the row
+  const descriptors =
+    report.descriptors && typeof report.descriptors === 'object'
+      ? report.descriptors
+      : report
+
+  return { reportId, caseNumber, createdDate, descriptors }
+}
+
+/**
+ * Loads reports from sketchai_reports (PDF export) and criminal_reports (Save Report).
+ * @returns {Promise<object[]>}
+ */
+async function loadReportsForMatching() {
+  const byId = new Map()
+
+  for (const report of getSketchaiReports()) {
+    const normalized = normalizeStoredReport(report)
+    if (normalized) byId.set(normalized.reportId, normalized)
+  }
+
+  try {
+    const criminal = await getCriminalReports()
+    for (const report of criminal) {
+      const normalized = normalizeStoredReport(report)
+      if (normalized && !byId.has(normalized.reportId)) {
+        byId.set(normalized.reportId, normalized)
+      }
+    }
+  } catch (err) {
+    console.warn('[matching] Could not load criminal reports for matching:', err)
+  }
+
+  return [...byId.values()]
+}
+
+/**
  * @param {Record<string, string>} currentDescriptors Witness form (camelCase) or snake_case row
- * @param {Record<string, string>} savedReport Row from criminal_reports
+ * @param {Record<string, unknown>} savedDescriptors Saved report descriptors
  * @returns {{ matchScore: number, matchedFields: string[], unmatchedFields: string[] }}
  */
-function compareDescriptors(currentDescriptors, savedReport) {
+function compareDescriptors(currentDescriptors, savedDescriptors) {
   /** @type {string[]} */
   const matchedFields = []
   /** @type {string[]} */
   const unmatchedFields = []
+  let comparedCount = 0
 
   for (const { key, formKey } of MATCH_FIELDS) {
     const left = getDescriptorValue(currentDescriptors, key, formKey)
-    const right = getDescriptorValue(savedReport, key, formKey)
+    const right = getDescriptorValue(savedDescriptors, key, formKey)
+    const leftNorm = normalizeValue(left)
+    const rightNorm = normalizeValue(right)
 
-    if (normalizeValue(left) === normalizeValue(right)) {
+    if (leftNorm === '' && rightNorm === '') {
+      continue
+    }
+
+    comparedCount += 1
+
+    if (leftNorm === rightNorm) {
       matchedFields.push(key)
     } else {
       unmatchedFields.push(key)
     }
   }
 
-  const matchScore = Math.round((matchedFields.length / TOTAL_FIELDS) * 100)
+  const matchScore =
+    comparedCount > 0
+      ? Math.round((matchedFields.length / comparedCount) * 100)
+      : 0
 
   return { matchScore, matchedFields, unmatchedFields }
 }
 
 /**
- * Compares witness descriptors against PDF-exported reports in localStorage.
+ * Compares witness descriptors against all saved reports (PDF export + Save Report).
  *
  * @param {Record<string, string>} currentDescriptors
  * @returns {Promise<{
@@ -104,26 +163,25 @@ function compareDescriptors(currentDescriptors, savedReport) {
  * }[]>}
  */
 export async function findMatches(currentDescriptors) {
-  const reports = await getAllReports()
+  const reports = await loadReportsForMatching()
 
   const matches = reports
     .map((report) => {
-      const savedDescriptors = report.descriptors ?? report
       const { matchScore, matchedFields, unmatchedFields } = compareDescriptors(
         currentDescriptors,
-        savedDescriptors,
+        report.descriptors,
       )
       const matchType = getMatchType(matchScore)
       if (!matchType) return null
 
       return {
-        caseNumber: report.caseNumber ?? report.case_number ?? '',
-        createdDate: formatCreatedDate(report.createdDate ?? report.created_at),
+        caseNumber: report.caseNumber,
+        createdDate: formatCreatedDate(report.createdDate),
         matchScore,
         matchType,
         matchedFields,
         unmatchedFields,
-        reportId: report.reportId ?? report.id ?? '',
+        reportId: report.reportId,
       }
     })
     .filter(Boolean)
