@@ -9,6 +9,7 @@
     "sketchResult": "චිත්‍ර ප්‍රතිඵලය",
     "refinement": "සංශෝධනය",
     "pdfExport": "PDF නිර්යාත",
+    "reports": "අපරාධ වාර්තා",
     "mainAria": "ප්‍රධාන සංචාලනය"
   },
   "home": {
@@ -35,6 +36,8 @@
     "validationRequired": "{{field}} අවශ්‍යයි",
     "clearForm": "පෝරමය මකන්න",
     "generateSketch": "සංයුක්ත චිත්‍රය ජනනය කරන්න",
+    "checkingMatches": "දත්ත සමුදාය පරීක්ෂා කරමින්…",
+    "matchCheckError": "සමාන වාර්තා පරීක්ෂා කළ නොහැකි විය.",
     "progressLabel": "පෝරම ප්‍රගතිය",
     "progressCount": "අංශ {{total}} න් {{completed}} සම්පූර්ණ",
     "progressPercent": "ශතය {{percent}}",
@@ -289,6 +292,48 @@
   "loading": {
     "default": "සංයුක්ත චිත්‍රය ජනනය වෙමින්…",
     "hint": "සාක්ෂි විස්තරයෙන් විමර්ශන සංයුක්ත ගොඩනගමින්"
+  },
+  "match": {
+    "title": "දත්ත සමුදා ගැලපීම් හමු විය",
+    "subtitle": "නව සංයුක්තය ජනනය කිරීමට පෙර සමාන වාර්තා සමාලෝචනය කරන්න. ලකුණු අනුව පෙළගැසේ.",
+    "close": "වසන්න",
+    "headerExact": "පවතින වාර්තාවක් හමු විය",
+    "headerHigh": "සමාන සැකකරු හමු විය",
+    "headerPossible": "හැකි ගැලපීමක් හමු විය",
+    "headerDefault": "ගැලපීමක් හමු විය",
+    "caseNumber": "නඩු අංකය",
+    "created": "සෑදූ දිනය",
+    "matchPercent": "ගැලපීම",
+    "matchedFields": "ගැලපූ ක්ෂේත්‍ර",
+    "viewReport": "සම්පූර්ණ වාර්තාව බලන්න",
+    "continueAnyway": "කෙසේ වෙතත් ජනනය කරගෙන යන්න"
+  },
+  "reports": {
+    "eyebrow": "අපරාධ දත්ත සමුදාය",
+    "title": "අපරාධ වාර්තා",
+    "description": "දත්ත සමුදායෙන් සුරකින ලද සැකකරු සංයුක්ත වාර්තා සොයා බලන්න.",
+    "searchLabel": "සොයන්න",
+    "searchPlaceholder": "නඩු අංකය, ජාතිකත්වය, හෝ වයස් පරාසය…",
+    "sortLabel": "පෙළගැසීම",
+    "sortNewest": "නවතම පළමුව",
+    "sortOldest": "පැරණිතම පළමුව",
+    "loading": "වාර්තා පූරණය වෙමින්…",
+    "noResults": "ඔබේ සෙවුමට ගැලපෙන වාර්තා නැත.",
+    "noReports": "තවම අපරාධ වාර්තා සුරකි නැත.",
+    "startForm": "සාක්ෂි පෝරමය ආරම්භ කරන්න",
+    "noImage": "රූපයක් නැත",
+    "viewFull": "සම්පූර්ණ වාර්තාව බලන්න",
+    "backToReports": "වාර්තා වෙත ආපසු",
+    "printReport": "වාර්තාව මුද්‍රණය",
+    "detailLoading": "වාර්තාව පූරණය වෙමින්…",
+    "detailNotFound": "වාර්තාව හමු නොවීය",
+    "detailNotFoundDesc": "මෙම වාර්තාව පූරණය කළ නොහැකි විය.",
+    "detailEyebrow": "අපරාධ වාර්තාව",
+    "detailCreated": "සෑදූ දිනය",
+    "detailVariation": "විචලනය",
+    "detailNoFields": "විස්තර ක්ෂේත්‍ර නොමැත.",
+    "notesTitle": "සටහන්",
+    "notesEmpty": "අමතර සටහන් නොමැත."
   },
   "common": {
     "none": "නැත"

@@ -1,6 +1,7 @@
 import { Outlet } from 'react-router-dom'
 import { ToastProvider } from '../context/ToastContext.jsx'
 import AppHeader from './AppHeader'
+import ErrorBoundary from './ErrorBoundary'
 import Sidebar from './Sidebar'
 import './Layout.css'
 
@@ -12,7 +13,9 @@ export default function Layout() {
         <div className="app-content">
           <AppHeader />
           <main className="app-main">
-            <Outlet />
+            <ErrorBoundary>
+              <Outlet />
+            </ErrorBoundary>
           </main>
         </div>
       </div>

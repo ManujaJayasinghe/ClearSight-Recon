@@ -9,6 +9,7 @@
     "sketchResult": "Sketch Result",
     "refinement": "Refinement",
     "pdfExport": "PDF Export",
+    "reports": "Criminal Reports",
     "mainAria": "Main navigation"
   },
   "home": {
@@ -35,6 +36,8 @@
     "validationRequired": "{{field}} is required",
     "clearForm": "Clear Form",
     "generateSketch": "Generate Composite Sketch",
+    "checkingMatches": "Checking database…",
+    "matchCheckError": "Could not check the database for similar reports.",
     "progressLabel": "Form progress",
     "progressCount": "{{completed}} of {{total}} sections complete",
     "progressPercent": "{{percent}} percent",
@@ -289,6 +292,48 @@
   "loading": {
     "default": "Generating composite sketch…",
     "hint": "Building forensic composite from witness description"
+  },
+  "match": {
+    "title": "Database matches found",
+    "subtitle": "Review similar records before generating a new composite. Matches are ordered by score.",
+    "close": "Close",
+    "headerExact": "Existing Record Found",
+    "headerHigh": "Similar Suspect Found",
+    "headerPossible": "Possible Match Found",
+    "headerDefault": "Match Found",
+    "caseNumber": "Case number",
+    "created": "Created",
+    "matchPercent": "Match",
+    "matchedFields": "Matched fields",
+    "viewReport": "View Full Report",
+    "continueAnyway": "Continue Generating Anyway"
+  },
+  "reports": {
+    "eyebrow": "Criminal database",
+    "title": "Criminal Reports",
+    "description": "Search and review saved suspect composite reports from the database.",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Case number, ethnicity, or age range…",
+    "sortLabel": "Sort",
+    "sortNewest": "Newest First",
+    "sortOldest": "Oldest First",
+    "loading": "Loading reports…",
+    "noResults": "No reports match your search.",
+    "noReports": "No criminal reports have been saved yet.",
+    "startForm": "Start Witness Form",
+    "noImage": "No image",
+    "viewFull": "View Full Report",
+    "backToReports": "Back to Reports",
+    "printReport": "Print Report",
+    "detailLoading": "Loading report…",
+    "detailNotFound": "Report not found",
+    "detailNotFoundDesc": "This report could not be loaded.",
+    "detailEyebrow": "Criminal report",
+    "detailCreated": "Created",
+    "detailVariation": "Variation",
+    "detailNoFields": "No descriptor fields recorded.",
+    "notesTitle": "Notes",
+    "notesEmpty": "No additional notes recorded."
   },
   "common": {
     "none": "None"

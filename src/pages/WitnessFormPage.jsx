@@ -17,6 +17,8 @@ import {
   validateRequiredFields,
   getFirstSectionWithErrors,
 } from '../utils/witnessFormProgress'
+import MatchWarningModal from '../components/MatchWarningModal'
+import { findMatches } from '../services/matchingService'
 import './Page.css'
 import './WitnessFormPage.css'
 
@@ -63,11 +65,14 @@ function sectionDomId(sectionId) {
 }
 
 export default function WitnessFormPage() {
+  const { t } = useTranslation()
   const navigate = useNavigate()
   const [form, setForm] = useState(INITIAL_WITNESS_FORM)
   const [fieldErrors, setFieldErrors] = useState({})
   const [submitError, setSubmitError] = useState('')
   const [openSectionId, setOpenSectionId] = useState(FORM_SECTIONS[0].id)
+  const [matchResults, setMatchResults] = useState(null)
+  const [isCheckingMatches, setIsCheckingMatches] = useState(false)
 
   const progress = useMemo(() => getFormProgress(form), [form])
 
@@ -133,6 +138,11 @@ export default function WitnessFormPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  const proceedToGeneration = useCallback(() => {
+    setMatchResults(null)
+    navigate('/result', { state: { description: form } })
+  }, [form, navigate])
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setSubmitError('')
@@ -146,7 +156,33 @@ export default function WitnessFormPage() {
     }
 
     setFieldErrors({})
-    navigate('/result', { state: { description: form } })
+    setIsCheckingMatches(true)
+
+    try {
+      // Match against saved reports before fal.ai generation on the result page
+      const matches = await findMatches(form)
+      if (matches.length > 0) {
+        setMatchResults(matches)
+        return
+      }
+      proceedToGeneration()
+    } catch (err) {
+      setSubmitError(
+        err?.message ??
+          t('form.matchCheckError', 'Could not check the database for similar reports.'),
+      )
+    } finally {
+      setIsCheckingMatches(false)
+    }
+  }
+
+  const handleViewReport = (reportId) => {
+    setMatchResults(null)
+    navigate(`/reports/${reportId}`)
+  }
+
+  const handleCloseMatchModal = () => {
+    setMatchResults(null)
   }
 
   const renderSectionFields = (sectionId) => {
@@ -616,6 +652,15 @@ export default function WitnessFormPage() {
 
   return (
     <article className="page witness-form-page">
+      {matchResults?.length ? (
+        <MatchWarningModal
+          matches={matchResults}
+          onViewReport={handleViewReport}
+          onContinue={proceedToGeneration}
+          onClose={handleCloseMatchModal}
+        />
+      ) : null}
+
       <header className="page__header">
         <span className="page__eyebrow">{t('form.eyebrow')}</span>
         <h1 className="page__title">{t('form.title')}</h1>
@@ -682,8 +727,15 @@ export default function WitnessFormPage() {
           >
             Clear Form
           </button>
-          <button type="submit" className="btn btn--primary btn--large">
-            Generate Composite Sketch
+          <button
+            type="submit"
+            className={`btn btn--primary btn--large${isCheckingMatches ? ' btn--loading' : ''}`}
+            disabled={isCheckingMatches}
+            aria-busy={isCheckingMatches}
+          >
+            {isCheckingMatches
+              ? t('form.checkingMatches', 'Checking database…')
+              : t('form.generateSketch')}
           </button>
         </div>
       </form>

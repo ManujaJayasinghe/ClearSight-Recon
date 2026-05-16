@@ -5,6 +5,8 @@ import WitnessFormPage from './pages/WitnessFormPage'
 import ResultPage from './pages/ResultPage'
 import RefinementPage from './pages/RefinementPage'
 import PdfExportPage from './pages/PdfExportPage'
+import ReportsPage from './pages/ReportsPage'
+import ReportDetailPage from './pages/ReportDetailPage'
 
 export default function App() {
   return (
@@ -17,6 +19,8 @@ export default function App() {
           <Route path="refine" element={<RefinementPage />} />
           <Route path="refinement" element={<Navigate to="/refine" replace />} />
           <Route path="pdf-export" element={<PdfExportPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="reports/:id" element={<ReportDetailPage />} />
           <Route path="witness-form" element={<Navigate to="/form" replace />} />
           <Route path="sketch-result" element={<Navigate to="/result" replace />} />
         </Route>

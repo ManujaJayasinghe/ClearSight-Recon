@@ -15,6 +15,7 @@ import {
   GenerationStatus,
 } from '../utils/generateFace'
 import { buildWitnessSummarySections } from '../utils/witnessSummary'
+import SaveReportModal from '../components/SaveReportModal'
 import './ResultPage.css'
 
 const VARIATION_COUNT = 3
@@ -79,11 +80,17 @@ export default function ResultPage() {
   const [sidePhase, setSidePhase] = useState('idle')
   const [sideStatusMessage, setSideStatusMessage] = useState('')
   const [sideErrorMessage, setSideErrorMessage] = useState('')
+  const [saveReportOpen, setSaveReportOpen] = useState(false)
+  const [reportSaved, setReportSaved] = useState(false)
 
   const summarySections = useMemo(
     () => buildWitnessSummarySections(description ?? {}),
     [description, i18n.language],
   )
+
+  useEffect(() => {
+    setReportSaved(false)
+  }, [selectedVariationIndex])
 
   useEffect(() => {
     if (!description) return
@@ -210,8 +217,26 @@ export default function ResultPage() {
     )
   }
 
+  const selectedImageNumber = selectedVariationIndex + 1
+  const canSaveReport =
+    phase === 'success' && Boolean(imageUrl) && Boolean(description) && !reportSaved
+
   return (
     <article className="page page--wide result-page">
+      {saveReportOpen && imageUrl && description ? (
+        <SaveReportModal
+          descriptors={description}
+          imageUrl={imageUrl}
+          selectedImageNumber={selectedImageNumber}
+          onCancel={() => setSaveReportOpen(false)}
+          onSaved={() => {
+            setSaveReportOpen(false)
+            setReportSaved(true)
+            showToast('Criminal report saved successfully')
+          }}
+        />
+      ) : null}
+
       <section className="result-report__wrapper">
         <section className="result-report">
           <header className="result-report__banner">
@@ -281,6 +306,29 @@ export default function ResultPage() {
               >
                 {t('result.variationsHint')}
               </p>
+
+              {canSaveReport ? (
+                <div className="result-report__save-wrap">
+                  <button
+                    type="button"
+                    className="btn btn--primary result-report__save-btn"
+                    onClick={() => setSaveReportOpen(true)}
+                  >
+                    Save Criminal Report
+                  </button>
+                  <p className="result-report__save-hint">
+                    Save the selected composite and witness descriptors to the
+                    criminal reports database.
+                  </p>
+                </div>
+              ) : null}
+
+              {reportSaved && !saveReportOpen ? (
+                <p className="result-report__saved-badge" role="status">
+                  Criminal report saved to database.
+                </p>
+              ) : null}
+
               <div className="result-report__views">
                 <div className="result-report__view">
                   <span className="result-report__view-tag">{t('result.frontView')}</span>

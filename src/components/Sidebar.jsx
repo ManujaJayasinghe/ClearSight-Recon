@@ -10,6 +10,7 @@ const navItems = [
   { to: '/result', labelKey: 'nav.sketchResult' },
   { to: '/refine', labelKey: 'nav.refinement' },
   { to: '/pdf-export', labelKey: 'nav.pdfExport' },
+  { to: '/reports', labelKey: 'nav.reports' },
 ]
 
 export default function Sidebar() {
