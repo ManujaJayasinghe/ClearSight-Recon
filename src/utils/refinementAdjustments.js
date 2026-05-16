@@ -1,4 +1,5 @@
 import { FORM_OPTIONS } from '../constants/witnessForm'
+import i18n from '../i18n'
 
 const { ageRange, skinTone, hairLength, noseSize, eyeSize } = FORM_OPTIONS
 
@@ -99,5 +100,7 @@ const LABEL_BY_ID = Object.fromEntries(
 )
 
 export function getRefinementLabel(actionId) {
-  return LABEL_BY_ID[actionId] ?? 'Adjusted'
+  return i18n.t(`refine.controls.${actionId}`, {
+    defaultValue: LABEL_BY_ID[actionId] ?? i18n.t('refine.adjusted'),
+  })
 }

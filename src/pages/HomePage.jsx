@@ -1,19 +1,18 @@
 import { Link } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
 import { SITE_NAME } from '../constants/site'
 import ShieldIcon from '../components/ShieldIcon'
 import './Page.css'
 
 export default function HomePage() {
+  const { t } = useTranslation()
+
   return (
     <article className="page">
       <header className="page__header">
-        <span className="page__eyebrow">Forensic Composite System</span>
+        <span className="page__eyebrow">{t('home.eyebrow')}</span>
         <h1 className="page__title">{SITE_NAME}</h1>
-        <p className="page__description">
-          Transform witness descriptions into accurate forensic sketches. This
-          secure workflow guides investigators from initial testimony through
-          refinement and official PDF export.
-        </p>
+        <p className="page__description">{t('home.description')}</p>
       </header>
 
       <div className="page__card hero-card">
@@ -21,15 +20,11 @@ export default function HomePage() {
           <ShieldIcon size={64} />
         </div>
         <div>
-          <h2>Begin a New Composite Session</h2>
-          <p className="hero-card__text">
-            Start by capturing the witness description. The system will generate
-            an initial sketch, allow iterative refinement, and produce a
-            court-ready PDF for case files.
-          </p>
+          <h2>{t('home.heroTitle')}</h2>
+          <p className="hero-card__text">{t('home.heroText')}</p>
           <div className="hero-actions">
             <Link to="/form" className="btn btn--primary">
-              Start Witness Form
+              {t('home.startForm')}
             </Link>
           </div>
         </div>
@@ -37,16 +32,16 @@ export default function HomePage() {
 
       <div className="feature-grid">
         <div className="feature-card">
-          <h3>Witness Intake</h3>
-          <p>Structured form for facial features, build, and distinguishing marks.</p>
+          <h3>{t('home.featureIntakeTitle')}</h3>
+          <p>{t('home.featureIntakeText')}</p>
         </div>
         <div className="feature-card">
-          <h3>AI Sketch Generation</h3>
-          <p>Convert descriptions into preliminary composite sketches.</p>
+          <h3>{t('home.featureAiTitle')}</h3>
+          <p>{t('home.featureAiText')}</p>
         </div>
         <div className="feature-card">
-          <h3>Official Export</h3>
-          <p>Generate stamped PDF reports for investigative records.</p>
+          <h3>{t('home.featureExportTitle')}</h3>
+          <p>{t('home.featureExportText')}</p>
         </div>
       </div>
     </article>

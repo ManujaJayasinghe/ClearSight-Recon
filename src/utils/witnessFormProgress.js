@@ -1,5 +1,7 @@
-import { FIELD_LABELS, REQUIRED_FIELDS } from '../constants/witnessForm.js'
+import { REQUIRED_FIELDS } from '../constants/witnessForm.js'
 import { FORM_SECTIONS } from '../constants/witnessFormSections.js'
+import i18n from '../i18n/index.js'
+import { translateFieldLabel } from '../i18n/formOption.js'
 
 /** @type {Record<string, string>} */
 const FIELD_SATISFIED_BY_NONE = {
@@ -62,10 +64,9 @@ export function validateRequiredFields(form) {
   const errors = {}
   for (const field of REQUIRED_FIELDS) {
     if (!isFieldComplete(form, field)) {
-      const label = FIELD_LABELS[field] ?? field
-      const formatted =
-        label.charAt(0).toUpperCase() + label.slice(1)
-      errors[field] = `${formatted} is required`
+      errors[field] = i18n.t('form.validationRequired', {
+        field: translateFieldLabel(field),
+      })
     }
   }
   return errors

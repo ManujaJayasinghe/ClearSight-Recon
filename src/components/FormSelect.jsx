@@ -1,3 +1,5 @@
+import { translateFormOption } from '../i18n/formOption'
+
 export default function FormSelect({
   id,
   name,
@@ -8,7 +10,11 @@ export default function FormSelect({
   placeholder = 'Select…',
   required = false,
   error,
+  optionField,
 }) {
+  const getOptionLabel = (opt) =>
+    optionField ? translateFormOption(optionField, opt) : opt
+
   return (
     <div className={`form-field${error ? ' form-field--error' : ''}`}>
       <label htmlFor={id}>
@@ -28,7 +34,7 @@ export default function FormSelect({
         </option>
         {options.map((opt) => (
           <option key={opt} value={opt}>
-            {opt}
+            {getOptionLabel(opt)}
           </option>
         ))}
       </select>

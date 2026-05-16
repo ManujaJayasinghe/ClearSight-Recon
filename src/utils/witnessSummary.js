@@ -1,5 +1,11 @@
-import { FIELD_LABELS } from '../constants/witnessForm'
+import { FORM_OPTIONS } from '../constants/witnessForm'
 import { FORM_SECTIONS } from '../constants/witnessFormSections'
+import i18n from '../i18n'
+import {
+  translateFieldLabel,
+  translateFormOption,
+  translateSectionTitle,
+} from '../i18n/formOption'
 
 /** Fields that span full width in the summary layout. */
 const FULL_WIDTH_FIELDS = new Set([
@@ -10,6 +16,18 @@ const FULL_WIDTH_FIELDS = new Set([
   'scarLocation',
   'birthmarkLocation',
 ])
+
+const OPTION_FIELDS = new Set(Object.keys(FORM_OPTIONS))
+
+function formatDisplayValue(key, value) {
+  if (!value) {
+    return i18n.t('result.notSpecified')
+  }
+  if (OPTION_FIELDS.has(key)) {
+    return translateFormOption(key, value)
+  }
+  return value
+}
 
 /**
  * @param {Record<string, string>} description
@@ -22,9 +40,9 @@ export function buildWitnessSummarySections(description) {
       const value = raw.trim()
       return {
         key,
-        label: formatFieldLabel(key),
+        label: translateFieldLabel(key),
         value,
-        displayValue: value || 'Not specified',
+        displayValue: formatDisplayValue(key, value),
         isFullWidth: FULL_WIDTH_FIELDS.has(key),
         isEmpty: !value,
       }
@@ -34,7 +52,7 @@ export function buildWitnessSummarySections(description) {
 
     return {
       id: section.id,
-      title: section.title,
+      title: translateSectionTitle(section.id),
       filledCount: fields.length,
       totalCount: section.fields.length,
       fields: fields.map(({ key, label, value, displayValue, isFullWidth }) => ({
@@ -46,9 +64,4 @@ export function buildWitnessSummarySections(description) {
       })),
     }
   }).filter((section) => section.filledCount > 0)
-}
-
-function formatFieldLabel(key) {
-  const label = FIELD_LABELS[key] ?? key
-  return label.charAt(0).toUpperCase() + label.slice(1)
 }

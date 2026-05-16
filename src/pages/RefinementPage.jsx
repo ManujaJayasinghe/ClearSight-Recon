@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 import CompositeImage from '../components/CompositeImage'
 import CompositeLoading from '../components/CompositeLoading'
@@ -20,10 +21,6 @@ import './RefinementPage.css'
 
 const MAX_HISTORY = 4
 
-const STATUS_MESSAGES = {
-  [GenerationStatus.BUILDING_PROMPT]: 'Building portrait prompt…',
-  [GenerationStatus.REQUESTING]: 'Regenerating composite…',
-}
 
 /**
  * @param {string} imageUrl
@@ -53,6 +50,14 @@ function groupControls(controls) {
 }
 
 export default function RefinementPage() {
+  const { t } = useTranslation()
+  const STATUS_MESSAGES = useMemo(
+    () => ({
+      [GenerationStatus.BUILDING_PROMPT]: t('refine.statusBuilding'),
+      [GenerationStatus.REQUESTING]: t('refine.statusRegenerating'),
+    }),
+    [t],
+  )
   const location = useLocation()
   const { showToast } = useToast()
   const routeState = location.state ?? {}
@@ -67,7 +72,7 @@ export default function RefinementPage() {
     if (!imageUrl || !description) {
       return { history: [], activeId: null }
     }
-    const entry = createHistoryEntry(imageUrl, description, 'Original', seed)
+    const entry = createHistoryEntry(imageUrl, description, t('refine.original'), seed)
     return { history: [entry], activeId: entry.id }
   })
   const [isGenerating, setIsGenerating] = useState(false)
@@ -101,7 +106,7 @@ export default function RefinementPage() {
         const { imageUrl, seed: returnedSeed } = await generateFace(description, {
           seed,
           onStatusChange: (status) => {
-            setStatusMessage(STATUS_MESSAGES[status] ?? 'Processing…')
+            setStatusMessage(STATUS_MESSAGES[status] ?? t('refine.statusProcessing'))
           },
         })
 
@@ -110,20 +115,19 @@ export default function RefinementPage() {
           const nextHistory = [...prev.history, entry].slice(-MAX_HISTORY)
           return { history: nextHistory, activeId: entry.id }
         })
-        showToast(`${label} — sketch updated`)
+        showToast(t('refine.sketchUpdated', { label }))
       } catch (err) {
         setErrorMessage(
-          err?.message ??
-            'Could not regenerate the sketch. Please try another adjustment.',
+          err?.message ?? t('refine.regenFailed')
         )
-        showToast('Regeneration failed. Please try again.', 'error')
+        showToast(t('refine.regenFailedToast'), 'error')
       } finally {
         setIsGenerating(false)
         setStatusMessage('')
         generateBusyRef.current = false
       }
     },
-    [showToast],
+    [showToast, t, STATUS_MESSAGES],
   )
 
   const handleAdjustment = useCallback(
@@ -162,7 +166,7 @@ export default function RefinementPage() {
     if (isGenerating || entry.id === activeId) return
     setSession((prev) => ({ ...prev, activeId: entry.id }))
     setErrorMessage('')
-    showToast(`Restored: ${entry.label}`)
+    showToast(t('refine.restored', { label: entry.label }))
   }
 
   const exportState = activeEntry
@@ -187,14 +191,14 @@ export default function RefinementPage() {
     return (
       <article className="page page--wide refine-page">
         <header className="page__header">
-          <span className="page__eyebrow">Step 3 — Refinement</span>
-          <h1 className="page__title">Sketch Refinement</h1>
+          <span className="page__eyebrow">{t('refine.eyebrow')}</span>
+          <h1 className="page__title">{t('refine.title')}</h1>
           <p className="page__description">
-            Generate a composite on the result page before refining features.
+            {t('refine.missingDescription')}
           </p>
         </header>
         <Link to="/result" className="btn btn--primary">
-          Go to Sketch Result
+          {t('refine.goToResult')}
         </Link>
       </article>
     )
@@ -203,17 +207,16 @@ export default function RefinementPage() {
   return (
     <article className="page page--wide refine-page">
       <header className="page__header">
-        <span className="page__eyebrow">Step 3 — Refinement</span>
-        <h1 className="page__title">Sketch Refinement</h1>
+        <span className="page__eyebrow">{t('refine.eyebrow')}</span>
+        <h1 className="page__title">{t('refine.title')}</h1>
         <p className="page__description">
-          Adjust features and regenerate the composite until it matches witness
-          testimony. Select any recent version below to compare or restore.
+          {t('refine.description')}
         </p>
       </header>
 
       <div className="refine-workspace">
-        <section className="refine-preview" aria-label="Current composite sketch">
-          <h2 className="refine-preview__heading">Current Composite</h2>
+        <section className="refine-preview" aria-label={t('refine.previewAria')}>
+          <h2 className="refine-preview__heading">{t('refine.currentComposite')}</h2>
           <figure
             className={`refine-preview__frame${isGenerating ? ' refine-preview__frame--loading' : ''}`}
             aria-busy={isGenerating}
@@ -223,35 +226,31 @@ export default function RefinementPage() {
             ) : activeEntry ? (
               <CompositeImage
                 src={activeEntry.imageUrl}
-                alt="Refined composite sketch"
+                alt={t('refine.refinedAlt')}
                 className="refine-preview__image"
               />
             ) : null}
           </figure>
           <p className="refine-preview__status">
             {isGenerating
-              ? 'Applying adjustment and regenerating sketch…'
+              ? t('refine.statusApplying')
               : activeEntry
-                ? `Viewing: ${activeEntry.label}`
-                : 'Loading sketch…'}
+                ? t('refine.statusViewing', { label: activeEntry.label })
+                : t('refine.statusLoading')}
           </p>
         </section>
 
-        <section className="refine-controls" aria-label="Quick adjustments">
-          <h2 className="refine-controls__heading">Quick Adjustments</h2>
-          <p className="refine-controls__sub">
-            Each control updates the witness description and generates a new
-            composite. Hold <kbd>Alt</kbd> and press a shortcut key for faster
-            adjustments.
-          </p>
+        <section className="refine-controls" aria-label={t('refine.controlsAria')}>
+          <h2 className="refine-controls__heading">{t('refine.quickAdjustments')}</h2>
+          <p className="refine-controls__sub">{t('refine.controlsSub')}</p>
 
-          <aside className="refine-shortcuts" aria-label="Keyboard shortcuts">
-            <p className="refine-shortcuts__title">Keyboard shortcuts</p>
+          <aside className="refine-shortcuts" aria-label={t('refine.shortcutsAria')}>
+            <p className="refine-shortcuts__title">{t('refine.shortcutsTitle')}</p>
             <ul className="refine-shortcuts__list">
-              {REFINEMENT_SHORTCUT_GROUPS.map(({ keys, description }) => (
+              {REFINEMENT_SHORTCUT_GROUPS.map(({ keys }, index) => (
                 <li key={keys}>
                   <span className="refine-shortcuts__keys">{keys}</span>
-                  {description}
+                  {t(`refine.shortcuts.${['nose', 'hair', 'beard', 'eyes', 'age', 'skin'][index]}`)}
                 </li>
               ))}
             </ul>
@@ -265,7 +264,7 @@ export default function RefinementPage() {
 
           {controlGroups.map(([group, buttons]) => (
             <div key={group} className="refine-controls__group">
-              <span className="refine-controls__group-label">{group}</span>
+              <span className="refine-controls__group-label">{t(`refine.groups.${group}`, { defaultValue: group })}</span>
               <div className="refine-controls__buttons">
                 {buttons.map(({ id, label }) => {
                   const shortcut = getShortcutLabel(id)
@@ -278,7 +277,7 @@ export default function RefinementPage() {
                       aria-busy={isGenerating}
                       onClick={() => handleAdjustment(id)}
                     >
-                      <span className="refine-btn__label">{label}</span>
+                      <span className="refine-btn__label">{t(`refine.controls.${id}`, { defaultValue: label })}</span>
                       {shortcut ? (
                         <span className="refine-btn__shortcut">
                           <kbd>{shortcut}</kbd>
@@ -298,27 +297,27 @@ export default function RefinementPage() {
                 state={exportState}
                 className="btn btn--primary"
               >
-                This Looks Right — Export PDF
+                {t('refine.exportPdf')}
               </Link>
             ) : (
               <span className="btn btn--primary btn--disabled" aria-disabled="true">
-                This Looks Right — Export PDF
+                {t('refine.exportPdf')}
               </span>
             )}
           </div>
         </section>
       </div>
 
-      <section className="refine-history" aria-label="Version history">
-        <h2 className="refine-history__heading">Version History</h2>
+      <section className="refine-history" aria-label={t('refine.historyAria')}>
+        <h2 className="refine-history__heading">{t('refine.historyTitle')}</h2>
         <p className="refine-history__sub">
-          Last {MAX_HISTORY} generated versions — click a thumbnail to restore
+          {t('refine.historySub', { count: MAX_HISTORY })}
         </p>
         <div className="refine-history__strip">
           {historySlots.map((entry, index) => (
             <div key={entry?.id ?? `empty-${index}`} className="refine-history__slot">
               <span className="refine-history__slot-label">
-                {entry ? entry.label : `Slot ${index + 1}`}
+                {entry ? entry.label : t('refine.slot', { n: index + 1 })}
               </span>
               {entry ? (
                 <button
@@ -326,7 +325,7 @@ export default function RefinementPage() {
                   className={`refine-history__thumb${entry.id === activeId ? ' refine-history__thumb--active' : ''}`}
                   onClick={() => handleRestore(entry)}
                   disabled={isGenerating}
-                  aria-label={`Restore ${entry.label}`}
+                  aria-label={t('refine.restoreAria', { label: entry.label })}
                   aria-current={entry.id === activeId ? 'true' : undefined}
                 >
                   <CompositeImage src={entry.imageUrl} alt="" />
@@ -343,7 +342,7 @@ export default function RefinementPage() {
 
       <div className="refine-back">
         <Link to="/result" state={routeState} className="btn btn--secondary">
-          Back to Report
+          {t('refine.backToReport')}
         </Link>
       </div>
     </article>

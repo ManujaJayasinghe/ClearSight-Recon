@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import i18n from '../i18n'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import CompositeImage from '../components/CompositeImage'
 import CompositeLoading from '../components/CompositeLoading'
@@ -13,18 +15,33 @@ import {
   GenerationStatus,
 } from '../utils/generateFace'
 import { buildWitnessSummarySections } from '../utils/witnessSummary'
+import SaveReportModal from '../components/SaveReportModal'
+import MatchModal from '../components/MatchModal'
+import { findMatches } from '../services/matchingService'
 import './ResultPage.css'
 
 const VARIATION_COUNT = 3
 
-const STATUS_MESSAGES = {
-  [GenerationStatus.BUILDING_PROMPT]: 'Building portrait prompt…',
-  [GenerationStatus.REQUESTING]: `Generating ${VARIATION_COUNT} composite variations (may take 3–6 minutes)…`,
+function useStatusMessages(t) {
+  return useMemo(
+    () => ({
+      [GenerationStatus.BUILDING_PROMPT]: t('result.statusBuildingPrompt'),
+      [GenerationStatus.REQUESTING]: t('result.statusRequesting', {
+        count: VARIATION_COUNT,
+      }),
+    }),
+    [t],
+  )
 }
 
-const SIDE_STATUS_MESSAGES = {
-  [GenerationStatus.BUILDING_PROMPT]: 'Building side-profile prompt…',
-  [GenerationStatus.REQUESTING]: 'Generating side profile…',
+function useSideStatusMessages(t) {
+  return useMemo(
+    () => ({
+      [GenerationStatus.BUILDING_PROMPT]: t('result.statusSideBuilding'),
+      [GenerationStatus.REQUESTING]: t('result.statusSideRequesting'),
+    }),
+    [t],
+  )
 }
 
 function formatGeneratedAt(date) {
@@ -40,6 +57,9 @@ function formatGeneratedAt(date) {
 }
 
 export default function ResultPage() {
+  const { t } = useTranslation()
+  const STATUS_MESSAGES = useStatusMessages(t)
+  const SIDE_STATUS_MESSAGES = useSideStatusMessages(t)
   const location = useLocation()
   const navigate = useNavigate()
   const { showToast } = useToast()
@@ -53,7 +73,10 @@ export default function ResultPage() {
   const [selectedVariationIndex, setSelectedVariationIndex] = useState(0)
   const imageUrl = variationUrls[selectedVariationIndex] ?? null
   const activeSeed = variationSeeds[selectedVariationIndex] ?? undefined
-  const [phase, setPhase] = useState(() => (description ? 'loading' : 'missing'))
+  const [phase, setPhase] = useState(() => (description ? 'pending' : 'missing'))
+  const [matches, setMatches] = useState([])
+  const [showMatchModal, setShowMatchModal] = useState(false)
+  const [proceedToGenerate, setProceedToGenerate] = useState(false)
   const [statusMessage, setStatusMessage] = useState(STATUS_MESSAGES[GenerationStatus.BUILDING_PROMPT])
   const [errorMessage, setErrorMessage] = useState('')
   const [completedAt, setCompletedAt] = useState(null)
@@ -62,14 +85,54 @@ export default function ResultPage() {
   const [sidePhase, setSidePhase] = useState('idle')
   const [sideStatusMessage, setSideStatusMessage] = useState('')
   const [sideErrorMessage, setSideErrorMessage] = useState('')
+  const [saveReportOpen, setSaveReportOpen] = useState(false)
+  const [reportSaved, setReportSaved] = useState(false)
 
   const summarySections = useMemo(
     () => buildWitnessSummarySections(description ?? {}),
-    [description],
+    [description, i18n.language],
   )
 
   useEffect(() => {
+    setReportSaved(false)
+  }, [selectedVariationIndex])
+
+  useEffect(() => {
     if (!description) return
+
+    let cancelled = false
+
+    async function runMatchCheck() {
+      setMatches([])
+      setShowMatchModal(false)
+      setProceedToGenerate(false)
+      setPhase('pending')
+
+      try {
+        const found = await findMatches(description)
+        if (cancelled) return
+        if (found.length > 0) {
+          setMatches(found)
+          setShowMatchModal(true)
+        } else {
+          setProceedToGenerate(true)
+        }
+      } catch {
+        if (!cancelled) {
+          setProceedToGenerate(true)
+        }
+      }
+    }
+
+    runMatchCheck()
+
+    return () => {
+      cancelled = true
+    }
+  }, [description])
+
+  useEffect(() => {
+    if (!description || !proceedToGenerate) return
 
     let cancelled = false
 
@@ -91,7 +154,7 @@ export default function ResultPage() {
         const { urls, seeds } = await generateFaceVariations(description, VARIATION_COUNT, {
           onStatusChange: (status) => {
             if (!cancelled) {
-              setStatusMessage(STATUS_MESSAGES[status] ?? 'Processing…')
+              setStatusMessage(STATUS_MESSAGES[status] ?? t('result.statusProcessing'))
             }
           },
         })
@@ -101,15 +164,12 @@ export default function ResultPage() {
         setSelectedVariationIndex(0)
         setCompletedAt(new Date())
         setPhase('success')
-        showToast(`${urls.length} composite variations generated`)
+        showToast(t('result.toastVariations', { count: urls.length }))
       } catch (err) {
         if (cancelled) return
-        setErrorMessage(
-          err?.message ??
-            'Unable to generate the composite sketch. Please try again.',
-        )
+        setErrorMessage(err?.message ?? t('result.errorFront'))
         setPhase('error')
-        showToast('Front composite generation failed', 'error')
+        showToast(t('result.toastFrontFailed'), 'error')
       } finally {
         frontBusyRef.current = false
       }
@@ -121,7 +181,7 @@ export default function ResultPage() {
       cancelled = true
       frontBusyRef.current = false
     }
-  }, [description, retryCount, showToast])
+  }, [description, proceedToGenerate, retryCount, showToast, t, STATUS_MESSAGES])
 
   const handleRetryFront = () => {
     if (phase === 'loading' || frontBusyRef.current) return
@@ -149,19 +209,18 @@ export default function ResultPage() {
         prompt: sidePrompt,
         view: 'side',
         onStatusChange: (status) => {
-          setSideStatusMessage(SIDE_STATUS_MESSAGES[status] ?? 'Processing…')
+          setSideStatusMessage(
+            SIDE_STATUS_MESSAGES[status] ?? t('result.statusProcessing'),
+          )
         },
       })
       setSideProfileUrl(sideUrl)
       setSidePhase('success')
-      showToast('Side profile generated successfully')
+      showToast(t('result.toastSideSuccess'))
     } catch (err) {
-      setSideErrorMessage(
-        err?.message ??
-          'Unable to generate the side profile. Please try again.',
-      )
+      setSideErrorMessage(err?.message ?? t('result.errorSide'))
       setSidePhase('error')
-      showToast('Side profile generation failed', 'error')
+      showToast(t('result.toastSideFailed'), 'error')
     } finally {
       setSideStatusMessage('')
       sideBusyRef.current = false
@@ -186,22 +245,63 @@ export default function ResultPage() {
     return (
       <article className="page page--wide result-page">
         <header className="page__header">
-          <span className="page__eyebrow">Step 2 — Generation</span>
-          <h1 className="page__title">Suspect Composite Report</h1>
-          <p className="page__description">
-            No witness description was provided. Complete the witness form to
-            generate a composite sketch.
-          </p>
+          <span className="page__eyebrow">{t('result.eyebrow')}</span>
+          <h1 className="page__title">{t('result.title')}</h1>
+          <p className="page__description">{t('result.missingDescription')}</p>
         </header>
         <Link to="/form" className="btn btn--primary">
-          Go to Witness Form
+          {t('result.goToForm')}
         </Link>
       </article>
     )
   }
 
+  const selectedImageNumber = selectedVariationIndex + 1
+  const canSaveReport =
+    phase === 'success' && Boolean(imageUrl) && Boolean(description) && !reportSaved
+
   return (
     <article className="page page--wide result-page">
+      {showMatchModal ? (
+        <MatchModal
+          matches={matches}
+          onViewReport={(reportId) => {
+            const match = matches.find((m) => m.reportId === reportId)
+            navigate(`/report/${reportId}`, {
+              state: {
+                matchContext: match ?? null,
+                returnTo: {
+                  pathname: location.pathname,
+                  state: location.state,
+                },
+              },
+            })
+          }}
+          onContinue={() => {
+            setShowMatchModal(false)
+            setProceedToGenerate(true)
+          }}
+          onClose={() => navigate('/form')}
+        />
+      ) : null}
+
+      <div
+        className={`result-page__content${showMatchModal ? ' result-page__content--behind-modal' : ''}`}
+      >
+      {saveReportOpen && imageUrl && description ? (
+        <SaveReportModal
+          descriptors={description}
+          imageUrl={imageUrl}
+          selectedImageNumber={selectedImageNumber}
+          onCancel={() => setSaveReportOpen(false)}
+          onSaved={() => {
+            setSaveReportOpen(false)
+            setReportSaved(true)
+            showToast('Criminal report saved successfully')
+          }}
+        />
+      ) : null}
+
       <section className="result-report__wrapper">
         <section className="result-report">
           <header className="result-report__banner">
@@ -211,24 +311,22 @@ export default function ResultPage() {
               </span>
               <div>
                 <span className="result-report__dept">{SITE_NAME}</span>
-                <h1 className="result-report__title">
-                  Suspect Composite Report
-                </h1>
+                <h1 className="result-report__title">{t('result.title')}</h1>
               </div>
             </div>
 
             <dl className="result-report__meta">
               <div className="result-report__meta-row">
-                <dt className="result-report__meta-label">Case Reference</dt>
+                <dt className="result-report__meta-label">{t('result.caseReference')}</dt>
                 <dd className="result-report__meta-value">{caseReference}</dd>
               </div>
               <div className="result-report__meta-row">
-                <dt className="result-report__meta-label">Generated</dt>
+                <dt className="result-report__meta-label">{t('result.generated')}</dt>
                 <dd className="result-report__meta-value">
                   {displayTimestamp
                     ? formatGeneratedAt(displayTimestamp)
                     : phase === 'loading'
-                      ? 'In progress…'
+                      ? t('result.inProgress')
                       : '—'}
                 </dd>
               </div>
@@ -238,13 +336,13 @@ export default function ResultPage() {
           <main className="result-report__body">
             <aside className="result-report__image-panel">
               <span className="result-report__image-label">
-                Primary Composite — Subject No. 1
+                {t('result.primaryComposite')}
               </span>
               {phase === 'success' && variationUrls.length > 1 ? (
                 <div
                   className="result-report__variations"
                   role="listbox"
-                  aria-label="Select the closest match"
+                  aria-label={t('result.selectMatchAria')}
                 >
                   {variationUrls.map((url, index) => (
                     <button
@@ -252,7 +350,7 @@ export default function ResultPage() {
                       type="button"
                       role="option"
                       aria-selected={index === selectedVariationIndex}
-                      aria-label={`Variation ${index + 1}`}
+                      aria-label={t('result.variation', { n: index + 1 })}
                       className={`result-report__variation${index === selectedVariationIndex ? ' result-report__variation--selected' : ''}`}
                       onClick={() => setSelectedVariationIndex(index)}
                     >
@@ -271,11 +369,34 @@ export default function ResultPage() {
               <p
                 className={`result-report__variations-hint${phase === 'success' && variationUrls.length > 1 ? '' : ' result-report__variations-hint--hidden'}`}
               >
-                Select the variation that best matches the witness description.
+                {t('result.variationsHint')}
               </p>
+
+              {canSaveReport ? (
+                <div className="result-report__save-wrap">
+                  <button
+                    type="button"
+                    className="btn btn--primary result-report__save-btn"
+                    onClick={() => setSaveReportOpen(true)}
+                  >
+                    Save Criminal Report
+                  </button>
+                  <p className="result-report__save-hint">
+                    Save the selected composite and witness descriptors to the
+                    criminal reports database.
+                  </p>
+                </div>
+              ) : null}
+
+              {reportSaved && !saveReportOpen ? (
+                <p className="result-report__saved-badge" role="status">
+                  Criminal report saved to database.
+                </p>
+              ) : null}
+
               <div className="result-report__views">
                 <div className="result-report__view">
-                  <span className="result-report__view-tag">Front View</span>
+                  <span className="result-report__view-tag">{t('result.frontView')}</span>
                   <figure
                     className={`result-report__image-frame${phase === 'loading' ? ' result-report__image-frame--loading' : ''}${phase === 'error' ? ' result-report__image-frame--error' : ''}`}
                   >
@@ -285,7 +406,7 @@ export default function ResultPage() {
                     {phase === 'error' ? (
                       <div className="result-report__error" role="alert">
                         <p className="result-report__error-title">
-                          Generation failed
+                          {t('result.generationFailed')}
                         </p>
                         <p className="result-report__error-message">
                           {errorMessage}
@@ -297,14 +418,14 @@ export default function ResultPage() {
                           disabled={phase === 'loading'}
                           aria-busy={phase === 'loading'}
                         >
-                          Try Again
+                          {t('result.tryAgain')}
                         </button>
                       </div>
                     ) : null}
                     {phase === 'success' && imageUrl ? (
                       <CompositeImage
                         src={imageUrl}
-                        alt="Front view suspect composite"
+                        alt={t('result.frontAlt')}
                         className="result-report__image"
                       />
                     ) : null}
@@ -312,7 +433,7 @@ export default function ResultPage() {
                 </div>
 
                 <div className="result-report__view">
-                  <span className="result-report__view-tag">Side Profile</span>
+                  <span className="result-report__view-tag">{t('result.sideProfile')}</span>
                   <figure
                     className={`result-report__image-frame${sidePhase === 'loading' ? ' result-report__image-frame--loading' : ''}${sidePhase === 'error' ? ' result-report__image-frame--error' : ''}${sidePhase === 'idle' ? ' result-report__image-frame--empty' : ''}`}
                   >
@@ -322,7 +443,7 @@ export default function ResultPage() {
                     {sidePhase === 'error' ? (
                       <div className="result-report__error" role="alert">
                         <p className="result-report__error-title">
-                          Side profile failed
+                          {t('result.sideProfileFailed')}
                         </p>
                         <p className="result-report__error-message">
                           {sideErrorMessage}
@@ -334,21 +455,20 @@ export default function ResultPage() {
                           disabled={sidePhase === 'loading'}
                           aria-busy={sidePhase === 'loading'}
                         >
-                          Try Again
+                          {t('result.tryAgain')}
                         </button>
                       </div>
                     ) : null}
                     {sidePhase === 'success' && sideProfileUrl ? (
                       <CompositeImage
                         src={sideProfileUrl}
-                        alt="Side profile suspect composite"
+                        alt={t('result.sideAlt')}
                         className="result-report__image"
                       />
                     ) : null}
                     {sidePhase === 'idle' ? (
                       <p className="result-report__view-placeholder">
-                        Generate a 90° side-profile view from the same witness
-                        description.
+                        {t('result.sidePlaceholder')}
                       </p>
                     ) : null}
                   </figure>
@@ -364,8 +484,8 @@ export default function ResultPage() {
                   aria-busy={sidePhase === 'loading'}
                 >
                   {sidePhase === 'loading'
-                    ? 'Generating Side Profile…'
-                    : 'Generate Side Profile'}
+                    ? t('result.generatingSide')
+                    : t('result.generateSide')}
                 </button>
               ) : null}
               {sidePhase === 'loading' ? (
@@ -373,7 +493,7 @@ export default function ResultPage() {
                   className="result-report__side-loading-note"
                   aria-live="polite"
                 >
-                  {sideStatusMessage || 'Generating side profile…'}
+                  {sideStatusMessage || t('result.statusSideRequesting')}
                 </p>
               ) : null}
               {sidePhase === 'success' ? (
@@ -385,38 +505,34 @@ export default function ResultPage() {
                   aria-busy={sidePhase === 'loading'}
                 >
                   {sidePhase === 'loading'
-                    ? 'Regenerating…'
-                    : 'Regenerate Side Profile'}
+                    ? t('result.regenerating')
+                    : t('result.regenerateSide')}
                 </button>
               ) : null}
 
               <p className="result-report__image-caption">
                 {phase === 'loading'
-                  ? `Rendering ${VARIATION_COUNT} front composite variations from witness testimony…`
+                  ? t('result.captionLoading', { count: VARIATION_COUNT })
                   : phase === 'error'
-                    ? 'Composite could not be rendered. Adjust the description or retry.'
+                    ? t('result.captionError')
                     : sidePhase === 'loading'
-                      ? 'Front view complete. Side profile generation in progress…'
+                      ? t('result.captionSideLoading')
                       : variationUrls.length > 1
-                        ? 'Choose the closest match above, then refine or export.'
-                        : 'AI-generated forensic composites based on witness testimony.'}
+                        ? t('result.captionChoose')
+                        : t('result.captionDefault')}
               </p>
             </aside>
 
             <section className="result-report__summary-panel">
               <h2 className="result-report__summary-heading">
-                Witness Description Summary
+                {t('result.summaryHeading')}
               </h2>
-              <p className="result-report__summary-sub">
-                Consolidated intake fields submitted during composite session.
-                Verify accuracy before refinement or export.
-              </p>
+              <p className="result-report__summary-sub">{t('result.summarySub')}</p>
 
               <div className="result-report__summary-sections">
                 {summarySections.length === 0 ? (
                   <p className="result-report__summary-empty">
-                    No witness details were entered. Return to the form to add a
-                    description.
+                    {t('result.summaryEmpty')}
                   </p>
                 ) : (
                   summarySections.map((section) => (
@@ -426,7 +542,10 @@ export default function ResultPage() {
                           {section.title}
                         </h3>
                         <span className="result-report__section-count">
-                          {section.filledCount} of {section.totalCount} fields
+                          {t('result.fieldsOf', {
+                            filled: section.filledCount,
+                            total: section.totalCount,
+                          })}
                         </span>
                       </header>
                       <dl className="result-report__field-list">
@@ -451,24 +570,21 @@ export default function ResultPage() {
 
               {phase === 'loading' ? (
                 <span className="result-report__generating-badge">
-                  Generating composite…
+                  {t('result.generatingBadge')}
                 </span>
               ) : null}
             </section>
           </main>
 
           <footer className="result-report__footer">
-            <p className="result-report__footer-note">
-              This report is for investigative use only. Distribution limited to
-              authorized personnel. Composite subject to witness verification.
-            </p>
+            <p className="result-report__footer-note">{t('result.footerNote')}</p>
             <nav
               className="result-report__actions btn-group--stack-mobile"
-              aria-label="Report actions"
+              aria-label={t('result.reportActionsAria')}
             >
               {actionsDisabled ? (
                 <span className="btn btn--primary btn--disabled" aria-disabled="true">
-                  Refine This Sketch
+                  {t('result.refineSketch')}
                 </span>
               ) : (
                 <Link
@@ -476,12 +592,12 @@ export default function ResultPage() {
                   state={reportState}
                   className="btn btn--primary"
                 >
-                  Refine This Sketch
+                  {t('result.refineSketch')}
                 </Link>
               )}
               {actionsDisabled ? (
                 <span className="btn btn--secondary btn--disabled" aria-disabled="true">
-                  Export PDF
+                  {t('result.exportPdf')}
                 </span>
               ) : (
                 <Link
@@ -489,7 +605,7 @@ export default function ResultPage() {
                   state={reportState}
                   className="btn btn--secondary"
                 >
-                  Export PDF
+                  {t('result.exportPdf')}
                 </Link>
               )}
               <Link
@@ -498,26 +614,23 @@ export default function ResultPage() {
                 onClick={(e) => {
                   if (phase === 'loading' || sidePhase === 'loading') {
                     e.preventDefault()
-                    if (
-                      window.confirm(
-                        'Generation is in progress. Leave and return to the form?',
-                      )
-                    ) {
+                    if (window.confirm(t('result.leaveConfirm'))) {
                       navigate('/form')
                     }
                   }
                 }}
               >
-                Start Over
+                {t('result.startOver')}
               </Link>
             </nav>
           </footer>
 
           <span className="result-report__stamp" aria-hidden="true">
-            Official Use Only
+            {t('result.officialStamp')}
           </span>
         </section>
       </section>
+      </div>
     </article>
   )
 }

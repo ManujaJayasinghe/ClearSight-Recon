@@ -1,0 +1,609 @@
+{
+  "site": {
+    "name": "ClearSight-Recon",
+    "tagline": "Forensic Composite Unit"
+  },
+  "nav": {
+    "home": "Home",
+    "witnessForm": "Witness Description",
+    "sketchResult": "Sketch Result",
+    "refinement": "Refinement",
+    "pdfExport": "PDF Export",
+    "reports": "Criminal Reports",
+    "mainAria": "Main navigation"
+  },
+  "home": {
+    "eyebrow": "Forensic Composite System",
+    "description": "Transform witness descriptions into accurate forensic sketches. This secure workflow guides investigators from initial testimony through refinement and official PDF export.",
+    "heroTitle": "Begin a New Composite Session",
+    "heroText": "Start by capturing the witness description. The system will generate an initial sketch, allow iterative refinement, and produce a court-ready PDF for case files.",
+    "startForm": "Start Witness Form",
+    "featureIntakeTitle": "Witness Intake",
+    "featureIntakeText": "Structured form for facial features, build, and distinguishing marks.",
+    "featureAiTitle": "AI Sketch Generation",
+    "featureAiText": "Convert descriptions into preliminary composite sketches.",
+    "featureExportTitle": "Official Export",
+    "featureExportText": "Generate stamped PDF reports for investigative records."
+  },
+  "form": {
+    "eyebrow": "Step 1 — Intake",
+    "title": "Witness Description Form",
+    "description": "Complete all required sections (marked with *) before generating a sketch. Jawline, ears, build, and neck details are optional.",
+    "selectPlaceholder": "Select…",
+    "selectLocation": "Select location",
+    "clearConfirm": "Clear all witness description fields? This cannot be undone.",
+    "submitError": "Please complete all required fields before generating.",
+    "validationRequired": "{{field}} is required",
+    "clearForm": "Clear Form",
+    "generateSketch": "Generate Composite Sketch",
+    "checkingMatches": "Checking database…",
+    "matchCheckError": "Could not check the database for similar reports.",
+    "progressLabel": "Form progress",
+    "progressCount": "{{completed}} of {{total}} sections complete",
+    "progressPercent": "{{percent}} percent",
+    "sectionNavAria": "Jump to form section",
+    "required": "Required",
+    "previous": "Previous",
+    "nextSection": "Next section",
+    "placeholders": {
+      "scars": "e.g. long diagonal scar, small circular scar",
+      "tattoos": "e.g. tribal tattoo on right forearm, or \"None\"",
+      "birthmarks": "e.g. dark brown mole, small flat birthmark",
+      "otherFeatures": "Any additional details, or \"None\""
+    },
+    "scarLocationLabel": "Scar location (on face)",
+    "fields": {
+      "gender": "Gender",
+      "ethnicity": "Ethnicity / regional origin",
+      "faceShape": "Face shape",
+      "skinTone": "Skin tone",
+      "ageRange": "Age range",
+      "foreheadSize": "Forehead size",
+      "foreheadShape": "Forehead shape",
+      "eyeShape": "Eye shape",
+      "eyeColor": "Eye color",
+      "eyeSize": "Eye size",
+      "eyebrowThickness": "Eyebrow thickness",
+      "eyebrowShape": "Eyebrow shape",
+      "eyebrowColor": "Eyebrow color",
+      "noseType": "Nose type",
+      "noseSize": "Nose size",
+      "nostrilWidth": "Nostril width",
+      "noseBridgeHeight": "Nose bridge height",
+      "lipThickness": "Lip thickness",
+      "mouthWidth": "Mouth width",
+      "lipColor": "Lip color",
+      "philtrumLength": "Philtrum length",
+      "cheekboneProminence": "Cheekbone prominence",
+      "jawShape": "Jaw shape",
+      "jawWidth": "Jaw width",
+      "faceSymmetry": "Face symmetry",
+      "earSize": "Ear size",
+      "earProtrusion": "Ear protrusion",
+      "hairColor": "Hair color",
+      "hairLength": "Hair length",
+      "hairStyle": "Hair style",
+      "facialHair": "Facial hair",
+      "scarLocation": "Scar location",
+      "scars": "Scar description",
+      "tattoos": "Tattoos",
+      "birthmarkLocation": "Birthmark / mole location",
+      "birthmarks": "Birthmark / mole description",
+      "glasses": "Glasses",
+      "otherFeatures": "Other notable features",
+      "height": "Height",
+      "build": "Build",
+      "neckLength": "Neck length",
+      "neckWidth": "Neck width"
+    },
+    "sections": {
+      "face": {
+        "title": "Face Structure",
+        "shortTitle": "Face"
+      },
+      "eyes": {
+        "title": "Eyes",
+        "shortTitle": "Eyes"
+      },
+      "nose": {
+        "title": "Nose",
+        "shortTitle": "Nose"
+      },
+      "mouth": {
+        "title": "Mouth and Lips",
+        "shortTitle": "Mouth"
+      },
+      "jawline": {
+        "title": "Jawline & Cheeks",
+        "shortTitle": "Jawline"
+      },
+      "ears": {
+        "title": "Ears",
+        "shortTitle": "Ears"
+      },
+      "hair": {
+        "title": "Hair",
+        "shortTitle": "Hair"
+      },
+      "facial-hair": {
+        "title": "Facial Hair",
+        "shortTitle": "Facial Hair"
+      },
+      "distinguishing": {
+        "title": "Distinguishing Features",
+        "shortTitle": "Features"
+      },
+      "build": {
+        "title": "Build",
+        "shortTitle": "Build"
+      },
+      "neck": {
+        "title": "Neck & Overall",
+        "shortTitle": "Neck"
+      }
+    }
+  },
+  "result": {
+    "eyebrow": "Step 2 — Generation",
+    "title": "Suspect Composite Report",
+    "missingDescription": "No witness description was provided. Complete the witness form to generate a composite sketch.",
+    "goToForm": "Go to Witness Form",
+    "caseReference": "Case Reference",
+    "generated": "Generated",
+    "inProgress": "In progress…",
+    "primaryComposite": "Primary Composite — Subject No. 1",
+    "selectMatchAria": "Select the closest match",
+    "variation": "Variation {{n}}",
+    "variationsHint": "Select the variation that best matches the witness description.",
+    "frontView": "Front View",
+    "sideProfile": "Side Profile",
+    "generationFailed": "Generation failed",
+    "sideProfileFailed": "Side profile failed",
+    "tryAgain": "Try Again",
+    "frontAlt": "Front view suspect composite",
+    "sideAlt": "Side profile suspect composite",
+    "sidePlaceholder": "Generate a 90° side-profile view from the same witness description.",
+    "generatingSide": "Generating Side Profile…",
+    "generateSide": "Generate Side Profile",
+    "regenerating": "Regenerating…",
+    "regenerateSide": "Regenerate Side Profile",
+    "captionLoading": "Rendering {{count}} front composite variations from witness testimony…",
+    "captionError": "Composite could not be rendered. Adjust the description or retry.",
+    "captionSideLoading": "Front view complete. Side profile generation in progress…",
+    "captionChoose": "Choose the closest match above, then refine or export.",
+    "captionDefault": "AI-generated forensic composites based on witness testimony.",
+    "summaryHeading": "Witness Description Summary",
+    "summarySub": "Consolidated intake fields submitted during composite session. Verify accuracy before refinement or export.",
+    "summaryEmpty": "No witness details were entered. Return to the form to add a description.",
+    "fieldsOf": "{{filled}} of {{total}} fields",
+    "generatingBadge": "Generating composite…",
+    "footerNote": "This report is for investigative use only. Distribution limited to authorized personnel. Composite subject to witness verification.",
+    "reportActionsAria": "Report actions",
+    "refineSketch": "Refine This Sketch",
+    "exportPdf": "Export PDF",
+    "startOver": "Start Over",
+    "leaveConfirm": "Generation is in progress. Leave and return to the form?",
+    "officialStamp": "Official Use Only",
+    "notSpecified": "Not specified",
+    "statusBuildingPrompt": "Building portrait prompt…",
+    "statusRequesting": "Generating {{count}} composite variations (may take 3–6 minutes)…",
+    "statusProcessing": "Processing…",
+    "statusSideBuilding": "Building side-profile prompt…",
+    "statusSideRequesting": "Generating side profile…",
+    "toastVariations": "{{count}} composite variations generated",
+    "toastFrontFailed": "Front composite generation failed",
+    "toastSideSuccess": "Side profile generated successfully",
+    "toastSideFailed": "Side profile generation failed",
+    "errorFront": "Unable to generate the composite sketch. Please try again.",
+    "errorSide": "Unable to generate the side profile. Please try again."
+  },
+  "refine": {
+    "eyebrow": "Step 3 — Refinement",
+    "title": "Sketch Refinement",
+    "missingDescription": "Generate a composite on the result page before refining features.",
+    "goToResult": "Go to Sketch Result",
+    "description": "Adjust features and regenerate the composite until it matches witness testimony. Select any recent version below to compare or restore.",
+    "previewAria": "Current composite sketch",
+    "currentComposite": "Current Composite",
+    "refinedAlt": "Refined composite sketch",
+    "statusApplying": "Applying adjustment and regenerating sketch…",
+    "statusViewing": "Viewing: {{label}}",
+    "statusLoading": "Loading sketch…",
+    "controlsAria": "Quick adjustments",
+    "quickAdjustments": "Quick Adjustments",
+    "controlsSub": "Each control updates the witness description and generates a new composite. Hold Alt and press a shortcut key for faster adjustments.",
+    "shortcutsAria": "Keyboard shortcuts",
+    "shortcutsTitle": "Keyboard shortcuts",
+    "exportPdf": "This Looks Right — Export PDF",
+    "historyAria": "Version history",
+    "historyTitle": "Version History",
+    "historySub": "Last {{count}} generated versions — click a thumbnail to restore",
+    "slot": "Slot {{n}}",
+    "restoreAria": "Restore {{label}}",
+    "backToReport": "Back to Report",
+    "original": "Original",
+    "adjusted": "Adjusted",
+    "restored": "Restored: {{label}}",
+    "sketchUpdated": "{{label}} — sketch updated",
+    "regenFailed": "Could not regenerate the sketch. Please try another adjustment.",
+    "regenFailedToast": "Regeneration failed. Please try again.",
+    "statusBuilding": "Building portrait prompt…",
+    "statusRegenerating": "Regenerating composite…",
+    "statusProcessing": "Processing…",
+    "groups": {
+      "Nose": "Nose",
+      "Hair": "Hair",
+      "Facial hair": "Facial hair",
+      "Eyes": "Eyes",
+      "Age": "Age",
+      "Skin tone": "Skin tone"
+    },
+    "controls": {
+      "nose-wider": "Make nose wider",
+      "nose-narrower": "Make nose narrower",
+      "hair-longer": "Make hair longer",
+      "hair-shorter": "Make hair shorter",
+      "beard-add": "Add beard",
+      "beard-remove": "Remove beard",
+      "eyes-larger": "Eyes larger",
+      "eyes-smaller": "Eyes smaller",
+      "age-older": "Adjust age older",
+      "age-younger": "Adjust age younger",
+      "skin-lighter": "Change skin tone (lighter)",
+      "skin-darker": "Change skin tone (darker)"
+    },
+    "shortcuts": {
+      "nose": "Nose wider / narrower",
+      "hair": "Hair longer / shorter",
+      "beard": "Add / remove beard",
+      "eyes": "Eyes larger / smaller",
+      "age": "Age older / younger",
+      "skin": "Skin lighter / darker"
+    }
+  },
+  "pdf": {
+    "eyebrow": "Step 4 — Export",
+    "title": "PDF Export",
+    "description": "Generate an official forensic composite report for case documentation and distribution to authorized personnel.",
+    "officialReport": "Official Composite Report",
+    "frontView": "Front View",
+    "sideProfile": "Side Profile",
+    "frontAlt": "Front view composite",
+    "sideAlt": "Side profile composite",
+    "frontPlaceholder": "Front composite",
+    "sideNotGenerated": "Side profile not generated",
+    "caseId": "Case ID:",
+    "date": "Date:",
+    "investigator": "Investigator:",
+    "witnessId": "Witness ID:",
+    "ageRange": "Age range:",
+    "authorizedUser": "[Authorized User]",
+    "officialStamp": "OFFICIAL USE ONLY",
+    "noImagesError": "No composite images were provided. Complete generation on the result page first.",
+    "exportOptions": "Export Options",
+    "leadInvestigator": "Lead Investigator",
+    "investigatorPlaceholder": "Name and badge number",
+    "reportNotes": "Report Notes",
+    "notesPlaceholder": "Optional notes to include in the PDF footer",
+    "backToRefine": "Back to Refinement",
+    "downloadPdf": "Download PDF Report",
+    "newSession": "New Session"
+  },
+  "loading": {
+    "default": "Generating composite sketch…",
+    "hint": "Building forensic composite from witness description"
+  },
+  "match": {
+    "title": "Database matches found",
+    "subtitle": "Review similar records before generating a new composite. Matches are ordered by score.",
+    "close": "Close",
+    "headerExact": "Existing Record Found",
+    "headerHigh": "Similar Suspect Found",
+    "headerPossible": "Possible Match Found",
+    "headerDefault": "Match Found",
+    "caseNumber": "Case number",
+    "created": "Created",
+    "matchPercent": "Match",
+    "matchedFields": "Matched fields",
+    "viewReport": "View Full Report",
+    "continueAnyway": "Continue Generating Anyway"
+  },
+  "reports": {
+    "eyebrow": "Criminal database",
+    "title": "Criminal Reports",
+    "description": "Search and review saved suspect composite reports from the database.",
+    "searchLabel": "Search",
+    "searchPlaceholder": "Case number, ethnicity, or age range…",
+    "sortLabel": "Sort",
+    "sortNewest": "Newest First",
+    "sortOldest": "Oldest First",
+    "loading": "Loading reports…",
+    "noResults": "No reports match your search.",
+    "noReports": "No criminal reports have been saved yet.",
+    "startForm": "Start Witness Form",
+    "noImage": "No image",
+    "viewFull": "View Full Report",
+    "backToReports": "Back to Reports",
+    "printReport": "Print Report",
+    "detailLoading": "Loading report…",
+    "detailNotFound": "Report not found",
+    "detailNotFoundDesc": "This report could not be loaded.",
+    "detailEyebrow": "Criminal report",
+    "detailCreated": "Created",
+    "detailVariation": "Variation",
+    "detailNoFields": "No descriptor fields recorded.",
+    "notesTitle": "Notes",
+    "notesEmpty": "No additional notes recorded."
+  },
+  "common": {
+    "none": "None"
+  },
+  "options": {
+    "gender": {
+      "Male": "Male",
+      "Female": "Female"
+    },
+    "ethnicity": {
+      "South Asian": "South Asian",
+      "East Asian": "East Asian",
+      "Southeast Asian": "Southeast Asian",
+      "Middle Eastern": "Middle Eastern",
+      "West African": "West African",
+      "East African": "East African",
+      "European": "European",
+      "Latin American": "Latin American",
+      "Mixed": "Mixed"
+    },
+    "faceShape": {
+      "Oval": "Oval",
+      "Round": "Round",
+      "Square": "Square",
+      "Heart": "Heart",
+      "Diamond": "Diamond",
+      "Oblong": "Oblong"
+    },
+    "skinTone": {
+      "Very light": "Very light",
+      "Light": "Light",
+      "Medium": "Medium",
+      "Olive": "Olive",
+      "Brown": "Brown",
+      "Dark brown": "Dark brown",
+      "Dark": "Dark"
+    },
+    "ageRange": {
+      "Teenager": "Teenager",
+      "20s": "20s",
+      "30s": "30s",
+      "40s": "40s",
+      "50s": "50s",
+      "60s+": "60s+"
+    },
+    "foreheadSize": {
+      "Small": "Small",
+      "Medium": "Medium",
+      "Large": "Large"
+    },
+    "foreheadShape": {
+      "Flat": "Flat",
+      "Rounded": "Rounded",
+      "Prominent": "Prominent"
+    },
+    "eyeShape": {
+      "Almond": "Almond",
+      "Round": "Round",
+      "Hooded": "Hooded",
+      "Monolid": "Monolid",
+      "Upturned": "Upturned",
+      "Downturned": "Downturned"
+    },
+    "eyeColor": {
+      "Brown": "Brown",
+      "Black": "Black",
+      "Blue": "Blue",
+      "Green": "Green",
+      "Hazel": "Hazel",
+      "Grey": "Grey"
+    },
+    "eyeSize": {
+      "Small": "Small",
+      "Medium": "Medium",
+      "Large": "Large"
+    },
+    "eyebrowThickness": {
+      "Thin": "Thin",
+      "Medium": "Medium",
+      "Thick": "Thick"
+    },
+    "eyebrowShape": {
+      "Straight": "Straight",
+      "Arched": "Arched",
+      "Flat": "Flat",
+      "Bushy": "Bushy",
+      "Curved": "Curved"
+    },
+    "eyebrowColor": {
+      "Black": "Black",
+      "Dark brown": "Dark brown",
+      "Brown": "Brown",
+      "Light brown": "Light brown",
+      "Blonde": "Blonde",
+      "Grey": "Grey"
+    },
+    "noseType": {
+      "Narrow": "Narrow",
+      "Broad": "Broad",
+      "Hooked": "Hooked",
+      "Upturned": "Upturned",
+      "Flat": "Flat",
+      "Bulbous": "Bulbous"
+    },
+    "noseSize": {
+      "Small": "Small",
+      "Medium": "Medium",
+      "Large": "Large"
+    },
+    "nostrilWidth": {
+      "Narrow": "Narrow",
+      "Medium": "Medium",
+      "Wide": "Wide"
+    },
+    "noseBridgeHeight": {
+      "Low": "Low",
+      "Medium": "Medium",
+      "High": "High"
+    },
+    "lipThickness": {
+      "Thin": "Thin",
+      "Medium": "Medium",
+      "Full": "Full"
+    },
+    "mouthWidth": {
+      "Narrow": "Narrow",
+      "Medium": "Medium",
+      "Wide": "Wide"
+    },
+    "lipColor": {
+      "Light pink": "Light pink",
+      "Medium pink": "Medium pink",
+      "Dark pink": "Dark pink",
+      "Brown": "Brown",
+      "Dark brown": "Dark brown"
+    },
+    "philtrumLength": {
+      "Short": "Short",
+      "Medium": "Medium",
+      "Long": "Long"
+    },
+    "cheekboneProminence": {
+      "Flat": "Flat",
+      "Medium": "Medium",
+      "High/Prominent": "High/Prominent"
+    },
+    "jawShape": {
+      "Sharp": "Sharp",
+      "Rounded": "Rounded",
+      "Square": "Square",
+      "Soft": "Soft"
+    },
+    "jawWidth": {
+      "Narrow": "Narrow",
+      "Medium": "Medium",
+      "Wide": "Wide"
+    },
+    "faceSymmetry": {
+      "Symmetric": "Symmetric",
+      "Slightly asymmetric": "Slightly asymmetric"
+    },
+    "earSize": {
+      "Small": "Small",
+      "Medium": "Medium",
+      "Large": "Large"
+    },
+    "earProtrusion": {
+      "Flat against head": "Flat against head",
+      "Slightly protruding": "Slightly protruding",
+      "Protruding": "Protruding"
+    },
+    "hairColor": {
+      "Black": "Black",
+      "Dark brown": "Dark brown",
+      "Brown": "Brown",
+      "Light brown": "Light brown",
+      "Blonde": "Blonde",
+      "Red": "Red",
+      "Grey": "Grey",
+      "White": "White",
+      "Bald": "Bald"
+    },
+    "hairLength": {
+      "Bald": "Bald",
+      "Very short": "Very short",
+      "Short": "Short",
+      "Medium": "Medium",
+      "Long": "Long"
+    },
+    "hairStyle": {
+      "Straight": "Straight",
+      "Wavy": "Wavy",
+      "Curly": "Curly",
+      "Afro": "Afro",
+      "Pulled back": "Pulled back",
+      "Dreadlocks": "Dreadlocks"
+    },
+    "facialHair": {
+      "None": "None",
+      "Light stubble": "Light stubble",
+      "Heavy stubble": "Heavy stubble",
+      "Thin mustache": "Thin mustache",
+      "Thick mustache": "Thick mustache",
+      "Goatee": "Goatee",
+      "Short beard": "Short beard",
+      "Long beard": "Long beard",
+      "Full beard": "Full beard"
+    },
+    "scarLocation": {
+      "None": "None",
+      "Left cheek": "Left cheek",
+      "Right cheek": "Right cheek",
+      "Forehead": "Forehead",
+      "Chin": "Chin",
+      "Upper lip": "Upper lip",
+      "Lower lip": "Lower lip",
+      "Under left eye": "Under left eye",
+      "Under right eye": "Under right eye",
+      "Left temple": "Left temple",
+      "Right temple": "Right temple",
+      "Left jaw": "Left jaw",
+      "Right jaw": "Right jaw",
+      "Left side of nose": "Left side of nose",
+      "Right side of nose": "Right side of nose",
+      "Neck": "Neck",
+      "Bridge of nose": "Bridge of nose"
+    },
+    "birthmarkLocation": {
+      "None": "None",
+      "Above left lip": "Above left lip",
+      "Above right lip": "Above right lip",
+      "Left cheek": "Left cheek",
+      "Right cheek": "Right cheek",
+      "Under left eye": "Under left eye",
+      "Under right eye": "Under right eye",
+      "Forehead": "Forehead",
+      "Chin": "Chin",
+      "Nose": "Nose",
+      "Left temple": "Left temple",
+      "Right temple": "Right temple",
+      "Left jaw": "Left jaw",
+      "Right jaw": "Right jaw"
+    },
+    "glasses": {
+      "None": "None",
+      "Thin frame": "Thin frame",
+      "Thick frame": "Thick frame",
+      "Sunglasses": "Sunglasses"
+    },
+    "height": {
+      "Short": "Short",
+      "Average": "Average",
+      "Tall": "Tall",
+      "Very tall": "Very tall"
+    },
+    "build": {
+      "Slim": "Slim",
+      "Average": "Average",
+      "Athletic": "Athletic",
+      "Heavy": "Heavy"
+    },
+    "neckLength": {
+      "Short": "Short",
+      "Medium": "Medium",
+      "Long": "Long"
+    },
+    "neckWidth": {
+      "Thin": "Thin",
+      "Medium": "Medium",
+      "Thick": "Thick"
+    }
+  }
+}

@@ -1,17 +1,21 @@
 import { NavLink } from 'react-router-dom'
-import { SITE_NAME, SITE_TAGLINE } from '../constants/site'
+import { useTranslation } from 'react-i18next'
+import { SITE_NAME } from '../constants/site'
 import ShieldIcon from './ShieldIcon'
 import './Sidebar.css'
 
 const navItems = [
-  { to: '/', label: 'Home', end: true },
-  { to: '/form', label: 'Witness Description' },
-  { to: '/result', label: 'Sketch Result' },
-  { to: '/refine', label: 'Refinement' },
-  { to: '/pdf-export', label: 'PDF Export' },
+  { to: '/', labelKey: 'nav.home', end: true },
+  { to: '/form', labelKey: 'nav.witnessForm' },
+  { to: '/result', labelKey: 'nav.sketchResult' },
+  { to: '/refine', labelKey: 'nav.refinement' },
+  { to: '/pdf-export', labelKey: 'nav.pdfExport' },
+  { to: '/reports', labelKey: 'nav.reports' },
 ]
 
 export default function Sidebar() {
+  const { t } = useTranslation()
+
   return (
     <aside className="sidebar">
       <div className="sidebar__brand">
@@ -20,13 +24,13 @@ export default function Sidebar() {
         </div>
         <div className="sidebar__brand-text">
           <span className="sidebar__title">{SITE_NAME}</span>
-          <span className="sidebar__subtitle">{SITE_TAGLINE}</span>
+          <span className="sidebar__subtitle">{t('site.tagline')}</span>
         </div>
       </div>
 
-      <nav className="sidebar__nav" aria-label="Main navigation">
+      <nav className="sidebar__nav" aria-label={t('nav.mainAria')}>
         <ul>
-          {navItems.map(({ to, label, end }) => (
+          {navItems.map(({ to, labelKey, end }) => (
             <li key={to}>
               <NavLink
                 to={to}
@@ -35,7 +39,7 @@ export default function Sidebar() {
                   `sidebar__link${isActive ? ' sidebar__link--active' : ''}`
                 }
               >
-                {label}
+                {t(labelKey)}
               </NavLink>
             </li>
           ))}

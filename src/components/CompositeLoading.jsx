@@ -1,6 +1,10 @@
+import { useTranslation } from 'react-i18next'
 import './CompositeLoading.css'
 
-export default function CompositeLoading({ message = 'Generating composite sketch…' }) {
+export default function CompositeLoading({ message }) {
+  const { t } = useTranslation()
+  const displayMessage = message ?? t('loading.default')
+
   return (
     <div className="composite-loading" role="status" aria-live="polite" aria-busy="true">
       <div className="composite-loading__frame">
@@ -25,10 +29,8 @@ export default function CompositeLoading({ message = 'Generating composite sketc
           aria-hidden="true"
         />
       </div>
-      <p className="composite-loading__message">{message}</p>
-      <p className="composite-loading__hint">
-        Building forensic composite from witness description
-      </p>
+      <p className="composite-loading__message">{displayMessage}</p>
+      <p className="composite-loading__hint">{t('loading.hint')}</p>
     </div>
   )
 }

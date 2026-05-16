@@ -1,4 +1,5 @@
 import { useId } from 'react'
+import { useTranslation } from 'react-i18next'
 
 export default function CollapsibleFormSection({
   id,
@@ -13,6 +14,7 @@ export default function CollapsibleFormSection({
   hasNext,
   hasPrev,
 }) {
+  const { t } = useTranslation()
   const panelId = useId()
   const headerId = `${id}-header`
 
@@ -37,7 +39,9 @@ export default function CollapsibleFormSection({
           <span className="collapsible-section__title">
             {title}
             {isRequired ? (
-              <span className="collapsible-section__required">Required</span>
+              <span className="collapsible-section__required">
+                {t('form.required')}
+              </span>
             ) : null}
           </span>
         </span>
@@ -61,7 +65,7 @@ export default function CollapsibleFormSection({
                 className="btn btn--secondary btn--section-nav"
                 onClick={onPrev}
               >
-                Previous
+                {t('form.previous')}
               </button>
             ) : (
               <span />
@@ -72,7 +76,7 @@ export default function CollapsibleFormSection({
                 className="btn btn--secondary btn--section-nav"
                 onClick={onNext}
               >
-                Next section
+                {t('form.nextSection')}
               </button>
             ) : null}
           </div>

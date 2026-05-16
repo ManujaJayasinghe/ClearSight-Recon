@@ -4,12 +4,21 @@
   background: var(--navy-950);
 }
 
+.app-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  padding-top: var(--space-md);
+}
+
 .app-main {
   flex: 1;
   min-width: 0;
   overflow-x: hidden;
   overflow-y: auto;
-  padding: var(--space-xl) clamp(1.25rem, 4vw, 2.5rem);
+  padding: 0 var(--space-xl) var(--space-xl);
+  padding-inline: clamp(1.25rem, 4vw, 2.5rem);
   background: linear-gradient(
     180deg,
     var(--navy-950) 0%,
@@ -23,6 +32,6 @@
   }
 
   .app-main {
-    padding: var(--space-lg) var(--space-md);
+    padding: 0 var(--space-md) var(--space-lg);
   }
 }

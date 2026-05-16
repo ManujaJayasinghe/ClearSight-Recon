@@ -1,10 +1,14 @@
+import { useTranslation } from 'react-i18next'
+
 export default function FormProgressBar({ completedCount, totalCount, percent }) {
+  const { t } = useTranslation()
+
   return (
-    <div className="form-progress" aria-label="Form completion progress">
+    <div className="form-progress" aria-label={t('form.progressLabel')}>
       <div className="form-progress__header">
-        <span className="form-progress__label">Form progress</span>
+        <span className="form-progress__label">{t('form.progressLabel')}</span>
         <span className="form-progress__count">
-          {completedCount} of {totalCount} sections complete
+          {t('form.progressCount', { completed: completedCount, total: totalCount })}
         </span>
       </div>
       <div
@@ -13,7 +17,7 @@ export default function FormProgressBar({ completedCount, totalCount, percent })
         aria-valuenow={percent}
         aria-valuemin={0}
         aria-valuemax={100}
-        aria-valuetext={`${percent} percent`}
+        aria-valuetext={t('form.progressPercent', { percent })}
       >
         <div
           className="form-progress__fill"
