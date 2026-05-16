@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import i18n from '../i18n'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import CompositeImage from '../components/CompositeImage'
 import CompositeLoading from '../components/CompositeLoading'
@@ -85,12 +84,8 @@ export default function ResultPage() {
 
   const summarySections = useMemo(
     () => buildWitnessSummarySections(description ?? {}),
-    [description, i18n.language],
+    [description],
   )
-
-  useEffect(() => {
-    setReportSaved(false)
-  }, [selectedVariationIndex])
 
   useEffect(() => {
     if (!description) return
@@ -287,7 +282,10 @@ export default function ResultPage() {
                       aria-selected={index === selectedVariationIndex}
                       aria-label={t('result.variation', { n: index + 1 })}
                       className={`result-report__variation${index === selectedVariationIndex ? ' result-report__variation--selected' : ''}`}
-                      onClick={() => setSelectedVariationIndex(index)}
+                      onClick={() => {
+                        setSelectedVariationIndex(index)
+                        setReportSaved(false)
+                      }}
                     >
                       <CompositeImage
                         src={url}

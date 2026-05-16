@@ -194,16 +194,14 @@ function buildNaturalPrompt(description = {}, view = 'front') {
   const hairColor = get(d, 'hairColor', 'hair_color')
   const hairLength = get(d, 'hairLength', 'hair_length')
   const hairStyle = get(d, 'hairStyle', 'hair_style')
-  let hair = ''
-  if (hairLength === 'Bald' || hairColor === 'Bald') {
-    hair = 'completely bald, no hair'
-  } else {
-    hair = joinParts([
-      hairColor ? lower(hairColor) : '',
-      hairLength ? lower(hairLength) : '',
-      hairStyle ? `${lower(hairStyle)} hair` : 'hair',
-    ])
-  }
+  const hair =
+    hairLength === 'Bald' || hairColor === 'Bald'
+      ? 'completely bald, no hair'
+      : joinParts([
+          hairColor ? lower(hairColor) : '',
+          hairLength ? lower(hairLength) : '',
+          hairStyle ? `${lower(hairStyle)} hair` : 'hair',
+        ])
 
   // Facial hair
   const facialHairRaw = get(d, 'facialHair', 'facial_hair')
@@ -528,7 +526,7 @@ async function postGenerationRequest(endpoint, payload) {
     clearTimeout(timeoutId)
   }
 
-  let data = {}
+  let data
   try {
     data = await response.json()
   } catch {
