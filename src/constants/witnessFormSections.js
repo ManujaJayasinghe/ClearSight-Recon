@@ -1,0 +1,101 @@
+/** @typedef {{ id: string, title: string, shortTitle: string, fields: string[], required?: boolean }} FormSectionConfig */
+
+/** @type {FormSectionConfig[]} */
+export const FORM_SECTIONS = [
+  {
+    id: 'face',
+    title: 'Face Structure',
+    shortTitle: 'Face',
+    fields: [
+      'gender',
+      'ethnicity',
+      'faceShape',
+      'skinTone',
+      'ageRange',
+      'foreheadSize',
+      'foreheadShape',
+    ],
+    required: true,
+  },
+  {
+    id: 'eyes',
+    title: 'Eyes',
+    shortTitle: 'Eyes',
+    fields: [
+      'eyeShape',
+      'eyeColor',
+      'eyeSize',
+      'eyebrowThickness',
+      'eyebrowShape',
+      'eyebrowColor',
+    ],
+    required: true,
+  },
+  {
+    id: 'nose',
+    title: 'Nose',
+    shortTitle: 'Nose',
+    fields: ['noseType', 'noseSize', 'nostrilWidth', 'noseBridgeHeight'],
+    required: true,
+  },
+  {
+    id: 'mouth',
+    title: 'Mouth and Lips',
+    shortTitle: 'Mouth',
+    fields: ['lipThickness', 'mouthWidth', 'lipColor', 'philtrumLength'],
+    required: true,
+  },
+  {
+    id: 'jawline',
+    title: 'Jawline & Cheeks',
+    shortTitle: 'Jawline',
+    fields: ['cheekboneProminence', 'jawShape', 'jawWidth', 'faceSymmetry'],
+  },
+  {
+    id: 'ears',
+    title: 'Ears',
+    shortTitle: 'Ears',
+    fields: ['earSize', 'earProtrusion'],
+  },
+  {
+    id: 'hair',
+    title: 'Hair',
+    shortTitle: 'Hair',
+    fields: ['hairColor', 'hairLength', 'hairStyle'],
+    required: true,
+  },
+  {
+    id: 'facial-hair',
+    title: 'Facial Hair',
+    shortTitle: 'Facial Hair',
+    fields: ['facialHair'],
+    required: true,
+  },
+  {
+    id: 'distinguishing',
+    title: 'Distinguishing Features',
+    shortTitle: 'Features',
+    fields: [
+      'scarLocation',
+      'scars',
+      'tattoos',
+      'birthmarkLocation',
+      'birthmarks',
+      'glasses',
+      'otherFeatures',
+    ],
+    required: true,
+  },
+  {
+    id: 'build',
+    title: 'Build',
+    shortTitle: 'Build',
+    fields: ['height', 'build'],
+  },
+  {
+    id: 'neck',
+    title: 'Neck & Overall',
+    shortTitle: 'Neck',
+    fields: ['neckLength', 'neckWidth'],
+  },
+]

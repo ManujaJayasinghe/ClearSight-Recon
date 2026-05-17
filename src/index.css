@@ -1,0 +1,90 @@
+:root {
+  --navy-950: #060d18;
+  --navy-900: #0a1628;
+  --navy-800: #0f1f3d;
+  --navy-700: #152a4d;
+  --navy-600: #1e3a66;
+  --navy-500: #2a4d7a;
+
+  --white: #f8fafc;
+  --slate-300: #94a3b8;
+  --slate-400: #64748b;
+  --slate-500: #475569;
+
+  --gold: #c9a227;
+  --gold-light: #dbb84a;
+  --gold-dim: rgba(201, 162, 39, 0.15);
+  --gold-glow: rgba(201, 162, 39, 0.25);
+
+  --success: #22c55e;
+
+  --sans: 'Segoe UI', system-ui, Roboto, sans-serif;
+  --mono: ui-monospace, Consolas, 'Courier New', monospace;
+
+  --page-max: 56rem;
+  --page-wide: 75rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --radius: 8px;
+
+  font: 16px/1.5 var(--sans);
+  color: var(--slate-300);
+  background: var(--navy-950);
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+body {
+  margin: 0;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--sans);
+}
+
+a {
+  color: inherit;
+}
+
+button {
+  font-family: inherit;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Improve default focus ring globally */
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+}
+
+/* Remove default outline when focus-visible is handled per-component */
+:focus:not(:focus-visible) {
+  outline: none;
+}

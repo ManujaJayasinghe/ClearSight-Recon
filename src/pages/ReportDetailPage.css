@@ -1,0 +1,131 @@
+.report-detail-page__status {
+  color: var(--slate-300);
+  margin: 0;
+}
+
+.report-detail-page__print-header {
+  display: none;
+}
+
+.report-detail-page__hero {
+  margin-bottom: var(--space-lg);
+  padding: var(--space-md);
+  text-align: center;
+}
+
+.report-detail-page__hero-image {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 6px;
+  border: 2px solid var(--gold);
+}
+
+.report-detail-page__sections {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.report-detail-page__section-title {
+  margin: 0 0 var(--space-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--gold);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.report-detail-page__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px 20px;
+  margin: 0;
+}
+
+.report-detail-page__field dt {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--slate-400);
+  margin-bottom: 4px;
+}
+
+.report-detail-page__field dd {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--white);
+}
+
+.report-detail-page__empty {
+  margin: 0;
+  color: var(--slate-400);
+}
+
+.report-detail-page__notes-text {
+  margin: 0;
+  color: var(--slate-300);
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.report-detail-page__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+@media print {
+  .report-detail-page--printable {
+    max-width: none;
+  }
+
+  .report-detail-page__no-print {
+    display: none !important;
+  }
+
+  .report-detail-page__print-header {
+    display: block;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #000;
+  }
+
+  .report-detail-page__print-header h1 {
+    margin: 0 0 4px;
+    font-size: 1.5rem;
+    color: #000;
+  }
+
+  .report-detail-page__print-header p {
+    margin: 0;
+    color: #333;
+  }
+
+  .report-detail-page__hero,
+  .report-detail-page__section {
+    break-inside: avoid;
+    border: 1px solid #ccc;
+    background: #fff !important;
+    box-shadow: none;
+  }
+
+  .report-detail-page__hero-image {
+    max-width: 100%;
+    border-color: #999;
+  }
+
+  .report-detail-page__section-title {
+    color: #000;
+  }
+
+  .report-detail-page__field dt {
+    color: #555;
+  }
+
+  .report-detail-page__field dd,
+  .report-detail-page__notes-text {
+    color: #000;
+  }
+}
